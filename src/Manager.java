@@ -66,6 +66,7 @@ public class Manager {
             epics.get(epicId).subtasks.clear();
             epics.get(epicId).status = "NEW"; // так как по ТЗ, если у эпика нет подзадач, то он имеет статус NEW
         }
+        subtasks.clear();
     }
 
     public Task getTaskById(int id) {
@@ -91,15 +92,15 @@ public class Manager {
 
     // метод реализую именно в manager, потому что тут удобнее работать с полем id сабтаска
     public void updateSubtask(int id, Subtask subtask, String status) {
+        int epicId = subtasks.get(id).epicId;
         epics.get(subtask.epicId).subtasks.remove(subtasks.get(id)); // удалили сабтаск из списка в классе эпик
         subtask.status = status; // присвоили новому объекту новый статус
-        epics.get(subtask.epicId).subtasks.add(subtask); // положили в список эпика список новый объект
+        epics.get(subtask.epicId).subtasks.add(subtask); // положили в список эпика новый объект
         subtasks.put(id, subtask); // сохранили объект в HashMap
-        checkEpicStatus(id); // проверили и переписали, если требуется, статус соответстующего эпика
+        checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
     }
 
-    private void checkEpicStatus(int id) {
-        int epicId = subtasks.get(id).epicId; // переменная для упрочтения чтения. Получаем id эпика у подзадачи.
+    private void checkEpicStatus(int epicId) {
         String status = setEpicStatus(epicId); // получаем новый статус эпика
         if (!(status.equals(epics.get(epicId).status))) { //если новый статус отличается, то переписываем его
             epics.get(epicId).status = status;
@@ -152,8 +153,9 @@ public class Manager {
     // метод реализую именно в manager, потому что тут удобнее работать с полем id сабтаска
     public void removeSubtask(int id) {
         int epicId = subtasks.get(id).epicId; // выяснили, к какому эпику относится подзадача
+        epics.get(epicId).subtasks.remove(subtasks.get(id));
         subtasks.remove(id); // удалили подзадачу
-        checkEpicStatus(id); // проверили и переписали, если требуется, статус  эпика
+        checkEpicStatus(epicId); // проверили и переписали, если требуется, статус  эпика
     }
 
     // раз уж все методы реализую тут, то и этот оставил в manager для порядка, хотя перенести в эпик и не сложно.
