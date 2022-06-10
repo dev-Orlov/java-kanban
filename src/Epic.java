@@ -1,13 +1,17 @@
 import java.util.ArrayList;
 
-public class Epic extends TaskTemplate {
+public class Epic extends Task {
 
-    ArrayList<Integer> subTasksId;
-    String status;
+    protected ArrayList<Subtask> subtasks;
 
-    public Epic(String name, String description, ArrayList<Integer> subTasksId, Manager manager) {
+    public Epic(String name, String description) {
         super(name, description);
-        this.subTasksId = subTasksId;
-        status = manager.setEpicStatus(subTasksId);
+        subtasks = new ArrayList<>();
+    }
+
+    // по ТЗ для генерации ID нужно использовать числовое поле класса manager, поэтому передаю manager при создании
+    public void createSubtask(Subtask subtask, Manager manager) {
+        manager.recordSubtasks(subtask);
+        subtasks.add(subtask);
     }
 }
