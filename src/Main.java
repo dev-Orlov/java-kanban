@@ -3,6 +3,9 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
 
+        /*Создание объекта я все-таки предлагаю оставить в main, как и сказано в ТЗ
+        это устранит вероятность появления проблем с дальнейшей работой программы по ТЗ следующих спринтов*/
+
         System.out.println("Тестируем программу согласно ТЗ.");
         System.out.println(System.lineSeparator());
         System.out.println("Создаем 2 задачи, эпик с 2 подзадачами и эпик с 1 подзадачей.");
@@ -18,55 +21,35 @@ public class Main {
         manager.recordEpics(epic);
 
         Subtask subtask = new Subtask("Почесать за правым ухом", "чесать нужно медленно",3);
-        manager.getEpicById(3).createSubtask(subtask, manager);
+        manager.getEpicById(3).recordSubtasks(subtask, manager);
 
         subtask = new Subtask("Почесать животик",
                 "там он не достает, поэтому забавно кайфует",3);
-        manager.getEpicById(3).createSubtask(subtask, manager);
+        manager.getEpicById(3).recordSubtasks(subtask, manager);
 
         epic = new Epic("Стать программистом", "зря я 8 лет строил карьеру в SMM");
         manager.recordEpics(epic);
 
         subtask = new Subtask("Починить микроволновку",
                 "жена сказала, что программисты это умеют",6);
-        manager.getEpicById(6).createSubtask(subtask, manager);
+        manager.getEpicById(6).recordSubtasks(subtask, manager);
 
         System.out.println("*ЗАДАЧИ УСПЕШНО СОЗДАНЫ*");
         System.out.println(System.lineSeparator());
         System.out.println("Теперь печатаем списки созданных задач.");
 
-        int taskNumber = 0;
         for (Task getTask : manager.getTaskList()) {
-            taskNumber += 1;
-            System.out.println("Задача № " + taskNumber + ".");
-            System.out.println("Название: " + getTask.name + ".");
-            System.out.println("Описание: " + getTask.description + ".");
-            System.out.println("Статус: " + getTask.status + ".");
+            System.out.println(getTask);
         }
         System.out.println(System.lineSeparator());
 
-        int epicNumber = 0;
         for (Epic getEpic : manager.getEpicList()) {
-            epicNumber += 1;
-            System.out.println("Эпик № " + epicNumber + ".");
-            System.out.println("Название: " + getEpic.name + ".");
-            System.out.println("Описание: " + getEpic.description + ".");
-            System.out.println("Эпик содержит подзадачи:");
-            for (Subtask getSubtask : getEpic.subtasks) {
-                System.out.println("- " + getSubtask.name);
-            }
-            System.out.println("Статус эпика: " + getEpic.status + ".");
+            System.out.println(getEpic);
         }
         System.out.println(System.lineSeparator());
 
-        int subtaskNumber = 0;
         for (Subtask getSubtask : manager.getSubtaskList()) {
-            subtaskNumber += 1;
-            System.out.println("Подзадача № " + subtaskNumber + ".");
-            System.out.println("Название: " + getSubtask.name + ".");
-            System.out.println("Описание: " + getSubtask.description + ".");
-            System.out.println("Подзадача относится к эпику с id " + getSubtask.epicId + ".");
-            System.out.println("Статус: " + getSubtask.status + ".");
+            System.out.println(getSubtask);
         }
         System.out.println(System.lineSeparator());
         System.out.println("Меняем статусы созданных объектов.");
@@ -114,38 +97,18 @@ public class Main {
         System.out.println(System.lineSeparator());
         System.out.println("Теперь задачи выглядят вот так:");
 
-        taskNumber = 0;
         for (Task getTask : manager.getTaskList()) {
-            taskNumber += 1;
-            System.out.println("Задача № " + taskNumber + ".");
-            System.out.println("Название: " + getTask.name + ".");
-            System.out.println("Описание: " + getTask.description + ".");
-            System.out.println("Статус: " + getTask.status + ".");
+            System.out.println(getTask);
         }
         System.out.println(System.lineSeparator());
 
-        epicNumber = 0;
         for (Epic getEpic : manager.getEpicList()) {
-            epicNumber += 1;
-            System.out.println("Эпик № " + epicNumber + ".");
-            System.out.println("Название: " + getEpic.name + ".");
-            System.out.println("Описание: " + getEpic.description + ".");
-            System.out.println("Эпик содержит подзадачи:");
-            for (Subtask getSubtask : getEpic.subtasks) {
-                System.out.println("- " + getSubtask.name);
-            }
-            System.out.println("Статус эпика: " + getEpic.status + ".");
+            System.out.println(getEpic);
         }
         System.out.println(System.lineSeparator());
 
-        subtaskNumber = 0;
         for (Subtask getSubtask : manager.getSubtaskList()) {
-            subtaskNumber += 1;
-            System.out.println("Подзадача № " + subtaskNumber + ".");
-            System.out.println("Название: " + getSubtask.name + ".");
-            System.out.println("Описание: " + getSubtask.description + ".");
-            System.out.println("Подзадача относится к эпику с id " + getSubtask.epicId + ".");
-            System.out.println("Статус: " + getSubtask.status + ".");
+            System.out.println(getSubtask);
         }
     }
 }

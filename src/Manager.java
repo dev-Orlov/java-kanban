@@ -5,28 +5,13 @@ public class Manager {
 
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-
-    private int taskNumber = 0;
-
-    public int getTaskNumber() {
-        taskNumber = taskNumber + 1;
-        return taskNumber;
-    }
 
     public void recordTasks(Task task) {
-        int id = getTaskNumber();
-        tasks.put(id, task);
+        tasks.put(task.id, task);
     }
 
     public void recordEpics(Epic epic) {
-        int id = getTaskNumber();
-        epics.put(id, epic);
-    }
-
-    public void recordSubtasks(Subtask subtask) {
-        int id = getTaskNumber();
-        subtasks.put(id, subtask);
+        epics.put(epic.id, epic);
     }
 
     public ArrayList<Task> getTaskList() {
@@ -48,7 +33,9 @@ public class Manager {
     public ArrayList<Subtask> getSubtaskList() {
         ArrayList<Subtask> subTaskList = new ArrayList<>();
         for (int epicId : epics.keySet()) {
-            subTaskList.addAll(epics.get(epicId).subtasks);
+            for (int subtaskId : epics.get(epicId).getSubtasks().keySet()) {
+                subTaskList.add(epics.get(epicId).getSubtasks().get(subtaskId));
+            }
         }
         return subTaskList;
     }
@@ -61,12 +48,11 @@ public class Manager {
         epics.clear();
     }
 
-    public void removeSubtasks(Manager manager) {
+    public void removeSubtasks() {
         for (int epicId : epics.keySet()) {
-            epics.get(epicId).subtasks.clear();
+            epics.get(epicId).clearSubtasks();
             epics.get(epicId).status = "NEW"; // так как по ТЗ, если у эпика нет подзадач, то он имеет статус NEW
         }
-        subtasks.clear();
     }
 
     public Task getTaskById(int id) {
@@ -77,26 +63,23 @@ public class Manager {
         return epics.get(id);
     }
 
-    public Subtask getSubtaskById(int id) {
-        return subtasks.get(id);
-    }
-
     public void updateTask(int id, Task task, String status) {
+        task.id = id;
         tasks.put(id, task);
         tasks.get(id).status = status;
     }
 
     public void updateEpic(int id, Epic epic, String status) {
+        epic.id = id;
         epics.put(id, epic);
     }
 
-    // метод реализую именно в manager, потому что тут удобнее работать с полем id сабтаска
     public void updateSubtask(int id, Subtask subtask, String status) {
-        int epicId = subtasks.get(id).epicId;
-        epics.get(subtask.epicId).subtasks.remove(subtasks.get(id)); // удалили сабтаск из списка в классе эпик
+        subtask.id = id;
+        int epicId = subtask.getEpicId();
+        epics.get(epicId).getSubtasks().remove(id); // удалили сабтаск из HashMap в классе эпик
         subtask.status = status; // присвоили новому объекту новый статус
-        epics.get(subtask.epicId).subtasks.add(subtask); // положили в список эпика новый объект
-        subtasks.put(id, subtask); // сохранили объект в HashMap
+        epics.get(epicId).getSubtasks().put(id, subtask); // положили в HashMap эпика новый объект
         checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
     }
 
@@ -113,14 +96,14 @@ public class Manager {
         int numberOfInProgressTasks = 0;
         String status = "IN_PROGRESS"; // согласно ТЗ, это дефолтный статус, если не выполняются обратные условия
 
-        if (epics.get(epicId).subtasks.size() == 0) { // если у эпика нет подзадач, то статус NEW
+        if (epics.get(epicId).getSubtasks().size() == 0) { // если у эпика нет подзадач, то статус NEW
             status = "NEW";
         } else {
-            for (Subtask subtask : epics.get(epicId).subtasks) { // считаем количество подзадач эпика с разным статусом
-                if (epics.get(epicId).subtasks == null) { // если подзадачи ещё не успели создать, то статус NEW
+            for (int subtaskID : epics.get(epicId).getSubtasks().keySet()) {
+                if (epics.get(epicId).getSubtasks().get(subtaskID) == null) {
                     status = "NEW";
                 } else {
-                    switch (subtask.status) {
+                    switch (epics.get(epicId).getSubtasks().get(subtaskID).status) {
                         case "NEW":
                             numberOfNewTasks += 1;
                             break;
@@ -150,16 +133,22 @@ public class Manager {
         epics.remove(id);
     }
 
-    // метод реализую именно в manager, потому что тут удобнее работать с полем id сабтаска
     public void removeSubtask(int id) {
-        int epicId = subtasks.get(id).epicId; // выяснили, к какому эпику относится подзадача
-        epics.get(epicId).subtasks.remove(subtasks.get(id));
-        subtasks.remove(id); // удалили подзадачу
-        checkEpicStatus(epicId); // проверили и переписали, если требуется, статус  эпика
+        int epicId;
+        for (int findEpicId : epics.keySet()) { // поочередно проверяем эпики, чтобы найти сабтаск
+            if (epics.get(findEpicId).getSubtasks().get(id) != null) {
+                epicId = epics.get(findEpicId).getSubtasks().get(id).getEpicId(); // нашли id эпика
+                epics.get(epicId).getSubtasks().remove(id); // удалили сабтаск из HashMap
+                checkEpicStatus(epicId); // проверили и переписали, если требуется, статус  эпика
+            }
+        }
     }
 
-    // раз уж все методы реализую тут, то и этот оставил в manager для порядка, хотя перенести в эпик и не сложно.
     public ArrayList<Subtask> getEpicIdSubtasks(int id) {
-        return epics.get(id).subtasks;
+        ArrayList<Subtask> epicIdSubtasks = new ArrayList<>();
+        for (int subtaskId : epics.get(id).getSubtasks().keySet()) {
+            epicIdSubtasks.add(epics.get(id).getSubtasks().get(subtaskId));
+        }
+        return epicIdSubtasks;
     }
 }
