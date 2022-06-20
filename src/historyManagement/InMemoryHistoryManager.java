@@ -3,13 +3,13 @@ package historyManagement;
 import historyManagement.HistoryManager;
 import tasks.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private List<Task> viewsHistory = new ArrayList<>();
-    public static final int VIEWS_HISTORY_LENGTH = 10;
+    private LinkedList<Task> viewsHistory = new LinkedList<>();
+    private static final int VIEWS_HISTORY_LENGTH = 10;
 
     @Override
     public List<Task> getHistory() {
@@ -19,10 +19,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (viewsHistory.size() == VIEWS_HISTORY_LENGTH) {
-            viewsHistory.remove(0);
-            viewsHistory.add(task);
+            viewsHistory.remove(VIEWS_HISTORY_LENGTH - 1);
+            viewsHistory.add(0, task);
         } else {
-            viewsHistory.add(task);
+            viewsHistory.add(0, task);
         }
     }
 }

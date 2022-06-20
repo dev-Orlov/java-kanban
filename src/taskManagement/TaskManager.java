@@ -40,10 +40,6 @@ public interface TaskManager {
 
     void updateSubtask(int id, Subtask subtask, TaskStatuses status);
 
-    void checkEpicStatus(int epicId);
-
-    TaskStatuses setEpicStatus(int epicId);
-
     void removeTask(int id);
 
     void removeEpic(int id);

@@ -12,28 +12,22 @@ public class Main {
         System.out.println("Создаем 2 задачи, эпик с 2 подзадачами и эпик с 1 подзадачей.");
         System.out.println("*ИДЁТ СОЗДАНИЕ*");
 
-        Task task = new Task("Пойти спать", "почему-то всегда забываю");
-        manager.recordTasks(task);
+        manager.recordTasks(new Task("Пойти спать", "почему-то всегда забываю"));
 
-        task = new Task("Оплатить YouTube премиум", "теперь это целый квест");
-        manager.recordTasks(task);
+        manager.recordTasks(new Task("Оплатить YouTube премиум", "теперь это целый квест"));
 
-        Epic epic = new Epic("Погладить собаку", "пёс очень милый, нужно чаще его гладить");
-        manager.recordEpics(epic);
+        manager.recordEpics(new Epic("Погладить собаку", "пёс очень милый, нужно чаще его гладить"));
 
-        Subtask subtask = new Subtask("Почесать за правым ухом", "чесать нужно медленно",3);
-        manager.recordSubtasks(subtask, 3);
+        manager.recordSubtasks((new Subtask("Почесать за правым ухом",
+                "чесать нужно медленно",3)),3);
 
-        subtask = new Subtask("Почесать животик",
-                "там он не достает, поэтому забавно кайфует",3);
-        manager.recordSubtasks(subtask, 3);
+        manager.recordSubtasks((new Subtask("Почесать животик",
+                "там он не достает, поэтому забавно кайфует",3)),3);
 
-        epic = new Epic("Стать программистом", "зря я 8 лет строил карьеру в SMM");
-        manager.recordEpics(epic);
+        manager.recordEpics(new Epic("Стать программистом", "зря я 8 лет строил карьеру в SMM"));
 
-        subtask = new Subtask("Починить микроволновку",
-                "жена сказала, что программисты это умеют",6);
-        manager.recordSubtasks(subtask, 6);
+        manager.recordSubtasks((new Subtask("Починить микроволновку",
+                "жена сказала, что программисты это умеют",6)),6);
 
         System.out.println("*ЗАДАЧИ УСПЕШНО СОЗДАНЫ*");
         System.out.println(System.lineSeparator());
@@ -55,22 +49,20 @@ public class Main {
         System.out.println(System.lineSeparator());
         System.out.println("Меняем статусы созданных объектов.");
 
-        task = new Task("Пойти спать", "почему-то всегда забываю");
-        manager.updateTask(1, task, TaskStatuses.IN_PROGRESS);
+        manager.updateTask(1, (new Task("Пойти спать", "почему-то всегда забываю")),
+                TaskStatuses.IN_PROGRESS);
 
-        task = new Task("Оплатить YouTube премиум", "теперь это целый квест");
-        manager.updateTask(2, task, TaskStatuses.DONE);
+        manager.updateTask(2, (new Task("Оплатить YouTube премиум", "теперь это целый квест")),
+                TaskStatuses.DONE);
 
-        subtask = new Subtask("Почесать за правым ухом", "чесать нужно медленно", 3);
-        manager.updateSubtask(4, subtask, TaskStatuses.DONE);
+        manager.updateSubtask(4, (new Subtask("Почесать за правым ухом", "чесать нужно медленно",
+                3)), TaskStatuses.DONE);
 
-        subtask = new Subtask("Почесать животик",
-                "там он не достает, поэтому забавно кайфует", 3);
-        manager.updateSubtask(5, subtask, TaskStatuses.DONE);
+        manager.updateSubtask(5, (new Subtask("Почесать животик",
+                "там он не достает, поэтому забавно кайфует", 3)), TaskStatuses.DONE);
 
-        subtask = new Subtask("Починить микроволновку",
-                "жена сказала, что программисты это умеют", 6);
-        manager.updateSubtask(7, subtask, TaskStatuses.IN_PROGRESS);
+        manager.updateSubtask(7, (new Subtask("Починить микроволновку",
+                "жена сказала, что программисты это умеют", 6)), TaskStatuses.IN_PROGRESS);
         System.out.println("*СТАТУСЫ ПОДЗАДАЧ ИЗМЕНЕНЫ*");
         System.out.println(System.lineSeparator());
 

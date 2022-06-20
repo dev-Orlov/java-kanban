@@ -10,9 +10,9 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    HistoryManager taskHistory = Managers.getDefaultHistory();
+    private HashMap<Integer, Task> tasks = new HashMap<>();
+    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HistoryManager taskHistory = Managers.getDefaultHistory();
 
 
     @Override
@@ -125,16 +125,14 @@ public class InMemoryTaskManager implements TaskManager {
         checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
     }
 
-    @Override
-    public void checkEpicStatus(int epicId) {
+    private void checkEpicStatus(int epicId) {
         TaskStatuses status = setEpicStatus(epicId); // получаем новый статус эпика
         if (!(status.equals(epics.get(epicId).getStatus()))) { //если новый статус отличается, то переписываем его
             epics.get(epicId).setStatus(status);
         }
     }
 
-    @Override
-    public TaskStatuses setEpicStatus(int epicId) {
+    private TaskStatuses setEpicStatus(int epicId) {
         int numberOfNewTasks = 0;
         int numberOfDoneTasks = 0;
         int numberOfInProgressTasks = 0;
