@@ -4,7 +4,6 @@ import historyManagement.HistoryManager;
 import tasks.Task;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -12,7 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private static final int VIEWS_HISTORY_LENGTH = 10;
 
     @Override
-    public List<Task> getHistory() {
+    public LinkedList<Task> getHistory() {
         return viewsHistory;
     }
 
