@@ -1,4 +1,7 @@
-import java.util.ArrayList;
+package tasks;
+
+import tasks.Task;
+
 import java.util.HashMap;
 
 public class Epic extends Task {
@@ -10,7 +13,7 @@ public class Epic extends Task {
         subtasks = new HashMap<>();
     }
 
-    public void recordSubtasks(Subtask subtask, Manager manager) {
+    public void recordSubtasks(Subtask subtask) {
         subtasks.put(subtask.id, subtask);
     }
 

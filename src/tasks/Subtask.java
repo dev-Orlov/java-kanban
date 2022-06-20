@@ -1,3 +1,7 @@
+package tasks;
+
+import tasks.Task;
+
 public class Subtask extends Task {
 
     private int epicId;

@@ -1,25 +1,44 @@
+package tasks;
+import utils.TaskStatuses;
+
 public class Task {
 
     protected String name;
     protected String description;
-    protected String status;
+    protected TaskStatuses status;
     protected int id;
     private static int genId = 0;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        status = "NEW";
+        status = TaskStatuses.NEW;
         this.id = generateId();
+    }
+
+    private static int generateId() {
+        genId += 1;
+        return genId;
+    }
+
+    public int getId() {
+        return(id);
     }
 
     public void setId(int newId) {
         id = newId;
     }
 
-    private static int generateId() {
-        genId += 1;
-        return genId;
+    public void setStatus(TaskStatuses newStatus) {
+        status = newStatus;
+    }
+
+    public TaskStatuses getStatus() {
+        return(status);
+    }
+
+    public String getName() {
+        return(name);
     }
 
     @Override
