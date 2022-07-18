@@ -1,6 +1,5 @@
 package historyManagement;
 
-import historyManagement.HistoryManager;
 import tasks.Task;
 
 import java.util.*;
@@ -23,6 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             result.add(node.getTask());
             node = node.getNext();
         }
+        Collections.reverse(result);
         return result;
     }
 
