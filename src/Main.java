@@ -9,123 +9,97 @@ public class Main {
 
         System.out.println("Тестируем программу согласно ТЗ.");
         System.out.println(System.lineSeparator());
-        System.out.println("Создаем 2 задачи, эпик с 2 подзадачами и эпик с 1 подзадачей.");
+        System.out.println("Создаем 2 задачи, эпик с 3 подзадачами и эпик без подзадач.");
         System.out.println("*ИДЁТ СОЗДАНИЕ*");
 
-        manager.recordTasks(new Task("Пойти спать", "почему-то всегда забываю"));
+        manager.recordTasks(new Task("Задача №1", "Описание задачи №1"));
 
-        manager.recordTasks(new Task("Оплатить YouTube премиум", "теперь это целый квест"));
+        manager.recordTasks(new Task("Задача №2", "Описание задачи №2"));
 
-        manager.recordEpics(new Epic("Погладить собаку", "пёс очень милый, нужно чаще его гладить"));
+        manager.recordEpics(new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1"));
 
-        manager.recordSubtasks((new Subtask("Почесать за правым ухом",
-                "чесать нужно медленно",3)),3);
+        manager.recordSubtasks((new Subtask("Подзадача №1 эпика №1",
+                "описание подзадачи №1 эпика №1",3)),3);
 
-        manager.recordSubtasks((new Subtask("Почесать животик",
-                "там он не достает, поэтому забавно кайфует",3)),3);
+        manager.recordSubtasks((new Subtask("Подзадача №2 эпика №1",
+                "описание подзадачи №2 эпика №1",3)),3);
 
-        manager.recordEpics(new Epic("Стать программистом", "зря я 8 лет строил карьеру в SMM"));
+        manager.recordSubtasks((new Subtask("Подзадача №3 эпика №1",
+                "описание подзадачи №3 эпика №1",3)),3);
 
-        manager.recordSubtasks((new Subtask("Починить микроволновку",
-                "жена сказала, что программисты это умеют",6)),6);
+        manager.recordEpics(new Epic("Эпик №2 без подзадач", "Описание эпика №2"));
 
         System.out.println("*ЗАДАЧИ УСПЕШНО СОЗДАНЫ*");
         System.out.println(System.lineSeparator());
-        System.out.println("Теперь печатаем списки созданных задач.");
+        System.out.println("Запрашиваем созданные задачи несколько раз в разном порядке");
 
-        for (Task getTask : manager.getTaskList()) {
-            System.out.println(getTask);
-        }
-        System.out.println(System.lineSeparator());
+        System.out.println("Согласно ТЗ выводим историю после каждого запроса");
 
-        for (Epic getEpic : manager.getEpicList()) {
-            System.out.println(getEpic);
-        }
-        System.out.println(System.lineSeparator());
+        manager.getTaskById(1);
+        printHistory(manager);
 
-        for (Subtask getSubtask : manager.getSubtaskList()) {
-            System.out.println(getSubtask);
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("Меняем статусы созданных объектов.");
+        manager.getTaskById(1);
+        printHistory(manager);
 
-        manager.updateTask(1, (new Task("Пойти спать", "почему-то всегда забываю")),
-                TaskStatuses.IN_PROGRESS);
+        manager.getSubtaskById(5);
+        printHistory(manager);
 
-        manager.updateTask(2, (new Task("Оплатить YouTube премиум", "теперь это целый квест")),
-                TaskStatuses.DONE);
+        manager.getEpicById(7);
+        printHistory(manager);
 
-        manager.updateSubtask(4, (new Subtask("Почесать за правым ухом", "чесать нужно медленно",
-                3)), TaskStatuses.DONE);
+        manager.getTaskById(1);
+        printHistory(manager);
 
-        manager.updateSubtask(5, (new Subtask("Почесать животик",
-                "там он не достает, поэтому забавно кайфует", 3)), TaskStatuses.DONE);
+        manager.getTaskById(2);
+        printHistory(manager);
 
-        manager.updateSubtask(7, (new Subtask("Починить микроволновку",
-                "жена сказала, что программисты это умеют", 6)), TaskStatuses.IN_PROGRESS);
-        System.out.println("*СТАТУСЫ ПОДЗАДАЧ ИЗМЕНЕНЫ*");
-        System.out.println(System.lineSeparator());
+        manager.getSubtaskById(6);
+        printHistory(manager);
 
-        System.out.println("Печатаем новые статусы");
+        manager.getTaskById(1);
+        printHistory(manager);
 
-        for (Task getTask : manager.getTaskList()) {
-            System.out.println("Статус задачи " + getTask.getName() + " изменился на " + getTask.getStatus() + ".");
-        }
-        System.out.println(System.lineSeparator());
+        manager.getTaskById(2);
+        printHistory(manager);
 
-        for (Epic getEpic : manager.getEpicList()) {
-            System.out.println("Статус задачи " + getEpic.getName() + " изменился на " + getEpic.getStatus() + ".");
-        }
-        System.out.println(System.lineSeparator());
+        manager.getTaskById(1);
+        printHistory(manager);
 
-        for (Subtask getSubtask : manager.getSubtaskList()) {
-            System.out.println("Статус задачи " + getSubtask.getName() + " изменился на " +
-                    getSubtask.getStatus() + ".");
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("И, наконец, удаляем 1 задачу и 1 эпик");
+        manager.getEpicById(3);
+        printHistory(manager);
+
+        manager.getTaskById(2);
+        printHistory(manager);
+
+        manager.getEpicById(7);
+        printHistory(manager);
+
+        manager.getSubtaskById(4);
+        printHistory(manager);
+
+        manager.getTaskById(1);
+        printHistory(manager);
+
+        manager.getEpicById(7);
+        printHistory(manager);
+
+        manager.getSubtaskById(5);
+        printHistory(manager);
+
+        System.out.println("Удаляем задачу и проверяем вывод истории");
 
         manager.removeTask(2);
+        printHistory(manager);
+
+        System.out.println("Удаляем эпик с тремя подзадачами и проверяем вывод истории");
         manager.removeEpic(3);
-        System.out.println("*ЗАДАЧИ УДАЛЕНЫ*");
-        System.out.println(System.lineSeparator());
-        System.out.println("Теперь задачи выглядят вот так:");
+        printHistory(manager);
+    }
 
-        for (Task getTask : manager.getTaskList()) {
-            System.out.println(getTask);
-        }
-        System.out.println(System.lineSeparator());
-
-        for (Epic getEpic : manager.getEpicList()) {
-            System.out.println(getEpic);
-        }
-        System.out.println(System.lineSeparator());
-
-        for (Subtask getSubtask : manager.getSubtaskList()) {
-            System.out.println(getSubtask);
-        }
-
-        System.out.println("Тестируем историю просмотра последних 10 задач.");
-        System.out.println("*ПРОСМАТРИВАЕМ ЗАДАЧИ С ID 1,6,7,7,7,7,6,1,1,1,7,7,7,7,7");
-        manager.getTaskById(1);
-        manager.getEpicById(6);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getEpicById(6);
-        manager.getTaskById(1);
-        manager.getTaskById(1);
-        manager.getTaskById(1);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-        manager.getSubtaskById(7);
-
-        System.out.print("Id последних 10 просмотренных задач: ");
+    public static void printHistory(TaskManager manager) {
         for (Task checkHistory : manager.getHistory()) {
             System.out.print(checkHistory.getId() + " "); // для удобства проверки печатаю только id
         }
+        System.out.println(System.lineSeparator());
     }
 }

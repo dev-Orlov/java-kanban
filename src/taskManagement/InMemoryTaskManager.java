@@ -169,16 +169,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int id) {
+        taskHistory.remove(id);
         tasks.remove(id);
     }
 
     @Override
     public void removeEpic(int id) {
+        for (Subtask getSubtask : getEpicIdSubtasks(id)) {
+            taskHistory.remove(getSubtask.getId());
+        }
+        taskHistory.remove(id);
         epics.remove(id);
     }
 
     @Override
     public void removeSubtask(int id) {
+        taskHistory.remove(id);
         int epicId;
         for (int findEpicId : epics.keySet()) { // поочередно проверяем эпики, чтобы найти сабтаск
             if (epics.get(findEpicId).getSubtasks().get(id) != null) {
