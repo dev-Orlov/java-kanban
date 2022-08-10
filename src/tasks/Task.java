@@ -8,7 +8,7 @@ public class Task {
     protected TaskStatuses status;
     protected int id;
     public static int genId = 0;
-    private final TasksTypes type = TasksTypes.TASK;
+    private final TasksType type = TasksType.TASK;
 
     public Task(String name, String description) {
         this.name = name;
@@ -26,7 +26,7 @@ public class Task {
         return(id);
     }
 
-    public TasksTypes getType() {
+    public TasksType getType() {
         return type;
     }
 

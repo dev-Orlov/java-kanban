@@ -1,12 +1,12 @@
 package taskManagement;
 
 import Exceptions.ManagerSaveException;
-import historyManagement.HistoryManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TasksTypes;
-import utils.Managers;
+import tasks.TasksType;
+import utils.CSVParser;
+import utils.Managers;   // это не лишний импорт, он нужен для создания объекта менеджера (по аналогии с 5 спринтом)
 import utils.TaskStatuses;
 
 import java.io.*;
@@ -37,22 +37,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
             bw.newLine();
-            bw.write(historyToString(taskHistory));
+            bw.write(CSVParser.historyToString(taskHistory));
             bw.flush();
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения файла");
         }
-    }
-
-    private static String historyToString(HistoryManager manager) throws ManagerSaveException {
-        StringBuilder historyId = new StringBuilder("");
-        for (Task checkHistory : manager.getHistory()) {
-            historyId.append(checkHistory.getId() + ",");
-        }
-        if (historyId.length() > 0) { // если история не пустая, удаляем последнюю запятую
-        historyId.deleteCharAt(historyId.length() - 1);
-        }
-        return historyId.toString();
     }
 
     public static FileBackedTasksManager loadFromFile(File file) throws ManagerSaveException {
@@ -62,16 +51,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String[] lines = oldFile.split("\\r?\\n");  // разбили строку файла по символу переноса
             for (int i = 1; i < lines.length; i++) {
                 if (lines[i].length() > 0) {  // проверяем, не пустая ли строка
-                    if (newManager.fromString(lines[i]).getType() == TasksTypes.TASK) {
-                        newManager.recordTasks(newManager.fromString(lines[i]));
-                    } else if (newManager.fromString(lines[i]).getType() == TasksTypes.EPIC) {
-                        newManager.recordEpics((Epic) newManager.fromString(lines[i]));
-                    } else if (newManager.fromString(lines[i]).getType() == TasksTypes.SUBTASK) {
-                        newManager.recordSubtasks((Subtask) newManager.fromString(lines[i]),
-                                ((Subtask) newManager.fromString(lines[i])).getEpicId());
+                    if (CSVParser.fromString(lines[i].trim()).getType() == TasksType.TASK) {
+                        newManager.recordTasks(CSVParser.fromString(lines[i].trim()));
+                    } else if (CSVParser.fromString(lines[i].trim()).getType() == TasksType.EPIC) {
+                        newManager.recordEpics((Epic) CSVParser.fromString(lines[i].trim()));
+                    } else if (CSVParser.fromString(lines[i].trim()).getType() == TasksType.SUBTASK) {
+                        newManager.recordSubtasks((Subtask) CSVParser.fromString(lines[i].trim()),
+                                ((Subtask) CSVParser.fromString(lines[i])).getEpicId());
                     }
                 } else {
-                    List<Integer> readHistory = newManager.historyFromString(lines[i+1]);
+                    List<Integer> readHistory = CSVParser.historyFromString(lines[i+1].trim());
                     int historySize = readHistory.size();
 
                     for (int y = historySize - 1; y >= 0; y--) { // идем от последней задачи к первой
@@ -94,49 +83,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла");
         }
-    }
-
-    private Task fromString(String value) throws ManagerSaveException {
-        Task readingTask = null;
-        String[] taskParameters = value.split(",");
-        int maxId = 0;  // необходимо выявить максимальный id загружаемых задач для дальнейшей генерации id
-        switch (TasksTypes.valueOf(taskParameters[1])) {
-            case TASK:
-                readingTask = new Task(taskParameters[2], taskParameters[4]);
-                readingTask.setId(Integer.parseInt(taskParameters[0]));
-                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
-                if (Integer.parseInt(taskParameters[0]) > maxId) {
-                    maxId = Integer.parseInt(taskParameters[0]);
-                }
-                break;
-            case EPIC:
-                readingTask = new Epic(taskParameters[2], taskParameters[4]);
-                readingTask.setId(Integer.parseInt(taskParameters[0]));
-                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
-                if (Integer.parseInt(taskParameters[0]) > maxId) {
-                    maxId = Integer.parseInt(taskParameters[0]);
-                }
-                break;
-            case SUBTASK:
-                readingTask = new Subtask(taskParameters[2], taskParameters[4], Integer.parseInt(taskParameters[5]));
-                readingTask.setId(Integer.parseInt(taskParameters[0]));
-                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
-                if (Integer.parseInt(taskParameters[0]) > maxId) {
-                    maxId = Integer.parseInt(taskParameters[0]);
-                }
-                break;
-        }
-        Task.genId = maxId + 1;  // обновляем точку отсчета генератора id у тасков
-        return readingTask;
-    }
-
-    private static List<Integer> historyFromString(String value) {
-        String[] stringHistory = value.split(",");
-        List<Integer> readHistory = new ArrayList<>();
-        for (String historyNote : stringHistory) {
-            readHistory.add(Integer.valueOf(historyNote));
-        }
-        return readHistory;
     }
 
     @Override
