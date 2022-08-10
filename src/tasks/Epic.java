@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Epic extends Task {
 
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final TasksTypes type = TasksTypes.EPIC;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -24,7 +25,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public String toString() {
+    public String toStringForPrint() {
         String printId = "Id эпика': " + id + "." + "\n";
         String printName = "Название: " + name + "."+ "\n";
         String printDescription = "Описание: " + description + "."+ "\n";
@@ -35,5 +36,14 @@ public class Epic extends Task {
             printSubtasks += printSubtask;
         }
         return printId + printName + printDescription + printStatus + printSubtasks;
+    }
+
+    @Override
+    public String toString() {
+        return id + "," + type + "," + name + "," + status + "," + description;
+    }
+    @Override
+    public TasksTypes getType() {
+        return type;
     }
 }

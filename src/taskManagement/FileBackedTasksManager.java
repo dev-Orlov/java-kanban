@@ -1,0 +1,271 @@
+package taskManagement;
+
+import Exceptions.ManagerSaveException;
+import historyManagement.HistoryManager;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+import tasks.TasksTypes;
+import utils.Managers;
+import utils.TaskStatuses;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FileBackedTasksManager extends InMemoryTaskManager {
+
+    private final Path autoSaveFile;
+
+    public FileBackedTasksManager(Path autoSaveFile) {
+        this.autoSaveFile = autoSaveFile;
+    }
+
+    private void save() throws ManagerSaveException {
+        try (final BufferedWriter bw = new BufferedWriter(new FileWriter(autoSaveFile.getFileName().toString()))) {
+            bw.write("id,type,name,status,description,epic\n");
+            for (Task task : getTaskList()) { // сохранем в буфер все таски
+                bw.write(task.toString() + "\n");
+            }
+            for (Epic epic : getEpicList()) { // сохранем в буфер все эпики
+                bw.write(epic.toString() + "\n");
+                for (Subtask subtask : getEpicIdSubtasks(epic.getId())) { // сохранем в буфер все сабтаски эпика
+                    bw.write(subtask.toString() + "\n");
+                }
+            }
+            bw.newLine();
+            bw.write(historyToString(taskHistory));
+            bw.flush();
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка сохранения файла");
+        }
+    }
+
+    private static String historyToString(HistoryManager manager) throws ManagerSaveException {
+        StringBuilder historyId = new StringBuilder("");
+        for (Task checkHistory : manager.getHistory()) {
+            historyId.append(checkHistory.getId() + ",");
+        }
+        if (historyId.length() > 0) { // если история не пустая, удаляем последнюю запятую
+        historyId.deleteCharAt(historyId.length() - 1);
+        }
+        return historyId.toString();
+    }
+
+    public static FileBackedTasksManager loadFromFile(File file) throws ManagerSaveException {
+        try  {
+            FileBackedTasksManager newManager = new FileBackedTasksManager(Paths.get(file.getCanonicalPath()));
+            String oldFile = Files.readString(Path.of(file.getName()));
+            String[] lines = oldFile.split("\\r?\\n");  // разбили строку файла по символу переноса
+            for (int i = 1; i < lines.length; i++) {
+                if (lines[i].length() > 0) {  // проверяем, не пустая ли строка
+                    if (newManager.fromString(lines[i]).getType() == TasksTypes.TASK) {
+                        newManager.recordTasks(newManager.fromString(lines[i]));
+                    } else if (newManager.fromString(lines[i]).getType() == TasksTypes.EPIC) {
+                        newManager.recordEpics((Epic) newManager.fromString(lines[i]));
+                    } else if (newManager.fromString(lines[i]).getType() == TasksTypes.SUBTASK) {
+                        newManager.recordSubtasks((Subtask) newManager.fromString(lines[i]),
+                                ((Subtask) newManager.fromString(lines[i])).getEpicId());
+                    }
+                } else {
+                    List<Integer> readHistory = newManager.historyFromString(lines[i+1]);
+                    int historySize = readHistory.size();
+
+                    for (int y = historySize - 1; y >= 0; y--) { // идем от последней задачи к первой
+                        if (newManager.tasks.containsKey(readHistory.get(y))) {
+                            newManager.getTaskById(readHistory.get(y));
+                        } else if (newManager.epics.containsKey(readHistory.get(y))) {
+                            newManager.getEpicById(readHistory.get(y));
+                        } else {
+                            for (int findEpic : newManager.epics.keySet()) {  // ищем нужный эпик для записи сабтаска
+                                if (newManager.epics.get(findEpic).getSubtasks().containsKey(readHistory.get(y))) {
+                                    newManager.getSubtaskById(readHistory.get(y));
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            return newManager;
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка чтения файла");
+        }
+    }
+
+    private Task fromString(String value) throws ManagerSaveException {
+        Task readingTask = null;
+        String[] taskParameters = value.split(",");
+        int maxId = 0;  // необходимо выявить максимальный id загружаемых задач для дальнейшей генерации id
+        switch (TasksTypes.valueOf(taskParameters[1])) {
+            case TASK:
+                readingTask = new Task(taskParameters[2], taskParameters[4]);
+                readingTask.setId(Integer.parseInt(taskParameters[0]));
+                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
+                if (Integer.parseInt(taskParameters[0]) > maxId) {
+                    maxId = Integer.parseInt(taskParameters[0]);
+                }
+                break;
+            case EPIC:
+                readingTask = new Epic(taskParameters[2], taskParameters[4]);
+                readingTask.setId(Integer.parseInt(taskParameters[0]));
+                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
+                if (Integer.parseInt(taskParameters[0]) > maxId) {
+                    maxId = Integer.parseInt(taskParameters[0]);
+                }
+                break;
+            case SUBTASK:
+                readingTask = new Subtask(taskParameters[2], taskParameters[4], Integer.parseInt(taskParameters[5]));
+                readingTask.setId(Integer.parseInt(taskParameters[0]));
+                readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
+                if (Integer.parseInt(taskParameters[0]) > maxId) {
+                    maxId = Integer.parseInt(taskParameters[0]);
+                }
+                break;
+        }
+        Task.genId = maxId + 1;  // обновляем точку отсчета генератора id у тасков
+        return readingTask;
+    }
+
+    private static List<Integer> historyFromString(String value) {
+        String[] stringHistory = value.split(",");
+        List<Integer> readHistory = new ArrayList<>();
+        for (String historyNote : stringHistory) {
+            readHistory.add(Integer.valueOf(historyNote));
+        }
+        return readHistory;
+    }
+
+    @Override
+    public void recordTasks(Task task) throws ManagerSaveException {
+        super.recordTasks(task);
+        save();
+    }
+
+    @Override
+    public void recordEpics(Epic epic) throws ManagerSaveException {
+        super.recordEpics(epic);
+        save();
+    }
+
+    @Override
+    public void recordSubtasks(Subtask subtask, int epicId) throws ManagerSaveException {
+        super.recordSubtasks(subtask, epicId);
+        save();
+    }
+
+    @Override
+    public void removeTasks() throws ManagerSaveException {
+        super.removeTasks();
+        save();
+    }
+
+    @Override
+    public void removeEpics() throws ManagerSaveException {
+        super.removeEpics();
+        save();
+    }
+
+    @Override
+    public void removeSubtasks() throws ManagerSaveException {
+        super.removeSubtasks();
+        save();
+    }
+
+    @Override
+    public Task getTaskById(int id) throws ManagerSaveException {
+        super.getTaskById(id);
+        save();
+        return super.getTaskById(id);
+    }
+
+    @Override
+    public Epic getEpicById(int id) throws ManagerSaveException {
+        super.getEpicById(id);
+        save();
+        return super.getEpicById(id);
+    }
+
+    @Override
+    public Subtask getSubtaskById(int id) throws ManagerSaveException {
+        super.getSubtaskById(id);
+        save();
+        return super.getSubtaskById(id);
+    }
+
+    @Override
+    public void updateTask(int id, Task task, TaskStatuses status) throws ManagerSaveException {
+        super.updateTask(id, task, status);
+        save();
+    }
+
+    @Override
+    public void updateEpic(int id, Epic epic, String status) throws ManagerSaveException {
+        super.updateEpic(id, epic, status);
+        save();
+    }
+
+    @Override
+    public void updateSubtask(int id, Subtask subtask, TaskStatuses status) throws ManagerSaveException {
+        super.updateSubtask(id, subtask, status);
+        save();
+    }
+
+    @Override
+    public void removeTask(int id) throws ManagerSaveException {
+        super.removeTask(id);
+        save();
+    }
+
+    @Override
+    public void removeEpic(int id) throws ManagerSaveException {
+        super.removeEpic(id);
+        save();
+    }
+
+    @Override
+    public void removeSubtask(int id) throws ManagerSaveException {
+        super.removeSubtask(id);
+        save();
+    }
+
+    public static void main(String[] args) throws ManagerSaveException {
+        TaskManager manager = Managers.getFileManager();
+
+        /*Тестируем программу согласно ТЗ
+        Создаем 2 задачи, эпик с 3 подзадачами и эпик без подзадач*/
+
+        manager.recordTasks(new Task("Задача №1", "Описание задачи №1"));
+        manager.recordTasks(new Task("Задача №2", "Описание задачи №2"));
+        manager.recordEpics(new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1"));
+        manager.recordSubtasks((new Subtask("Подзадача №1 эпика №1",
+                "описание подзадачи №1 эпика №1",3)),3);
+        manager.recordSubtasks((new Subtask("Подзадача №2 эпика №1",
+                "описание подзадачи №2 эпика №1",3)),3);
+        manager.recordSubtasks((new Subtask("Подзадача №3 эпика №1",
+                "описание подзадачи №3 эпика №1",3)),3);
+        manager.recordEpics(new Epic("Эпик №2 без подзадач", "Описание эпика №2"));
+
+        // Запрашиваем задачи, чтобы заполнилась история просмотра
+
+        manager.getTaskById(2);
+        manager.getSubtaskById(6);
+        manager.getTaskById(1);
+        manager.getTaskById(2);
+        manager.getTaskById(1);
+        manager.getEpicById(3);
+        manager.getTaskById(2);
+        manager.getEpicById(7);
+        manager.getSubtaskById(4);
+        manager.getTaskById(1);
+        manager.getEpicById(7);
+        manager.getSubtaskById(5);
+
+        // Создаём новый FileBackedTasksManager менеджер из этого же файла
+
+        loadFromFile(new File ("AutoSaveFile.csv"));
+    }
+}

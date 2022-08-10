@@ -7,7 +7,8 @@ public class Task {
     protected String description;
     protected TaskStatuses status;
     protected int id;
-    private static int genId = 0;
+    public static int genId = 0;
+    private final TasksTypes type = TasksTypes.TASK;
 
     public Task(String name, String description) {
         this.name = name;
@@ -23,6 +24,10 @@ public class Task {
 
     public int getId() {
         return(id);
+    }
+
+    public TasksTypes getType() {
+        return type;
     }
 
     public void setId(int newId) {
@@ -41,12 +46,16 @@ public class Task {
         return(name);
     }
 
-    @Override
-    public String toString() {
+    public String toStringForPrint() {
         String printId = "Id задачи: " + id + "." + "\n";
         String printName = "Название: " + name + "."+ "\n";
         String printDescription = "Описание: " + description + "."+ "\n";
         String printStatus = "Статус: " + status + "."+ "\n";
         return printId + printName + printDescription + printStatus;
+    }
+
+    @Override
+    public String toString() {
+        return id + "," + type + "," + name + "," + status + "," + description;
     }
 }

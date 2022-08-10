@@ -1,5 +1,6 @@
 package taskManagement;
 
+import Exceptions.ManagerSaveException;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public interface TaskManager {
 
-    void recordTasks(Task task);
+    void recordTasks(Task task) throws ManagerSaveException;
 
-    void recordEpics(Epic epic);
+    void recordEpics(Epic epic) throws ManagerSaveException;
 
-    void recordSubtasks(Subtask subtask, int epicId);
+    void recordSubtasks(Subtask subtask, int epicId) throws ManagerSaveException;
 
     ArrayList<Task> getTaskList();
 
@@ -22,29 +23,29 @@ public interface TaskManager {
 
     ArrayList<Subtask> getSubtaskList();
 
-    void removeTasks();
+    void removeTasks() throws ManagerSaveException;
 
-    void removeEpics();
+    void removeEpics() throws ManagerSaveException;
 
-    void removeSubtasks();
+    void removeSubtasks() throws ManagerSaveException;
 
-    Task getTaskById(int id);
+    Task getTaskById(int id) throws ManagerSaveException;
 
-    Epic getEpicById(int id);
+    Epic getEpicById(int id) throws ManagerSaveException;
 
-    Subtask getSubtaskById(int id);
+    Subtask getSubtaskById(int id) throws ManagerSaveException;
 
-    void updateTask(int id, Task task, TaskStatuses status);
+    void updateTask(int id, Task task, TaskStatuses status) throws ManagerSaveException;
 
-    void updateEpic(int id, Epic epic, String status);
+    void updateEpic(int id, Epic epic, String status) throws ManagerSaveException;
 
-    void updateSubtask(int id, Subtask subtask, TaskStatuses status);
+    void updateSubtask(int id, Subtask subtask, TaskStatuses status) throws ManagerSaveException;
 
-    void removeTask(int id);
+    void removeTask(int id) throws ManagerSaveException;
 
-    void removeEpic(int id);
+    void removeEpic(int id) throws ManagerSaveException;
 
-    void removeSubtask(int id);
+    void removeSubtask(int id) throws ManagerSaveException;
 
     ArrayList<Subtask> getEpicIdSubtasks(int id);
 
