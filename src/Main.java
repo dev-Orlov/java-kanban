@@ -1,7 +1,7 @@
 import taskManagement.TaskManager;
 import tasks.*;
 
-public class Main {
+public class Main { //комментарий
 
     public static void main(String[] args) {
     }
