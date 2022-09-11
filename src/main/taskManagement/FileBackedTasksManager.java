@@ -1,19 +1,19 @@
-package taskManagement;
+package main.taskManagement;
 
-import Exceptions.ManagerSaveException;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TasksType;
-import utils.CSVParser;
-import utils.Managers;   // это не лишний импорт, он нужен для создания объекта менеджера (по аналогии с 5 спринтом)
-import utils.TaskStatuses;
+import main.Exceptions.ManagerSaveException;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+import main.tasks.TasksType;
+import main.utils.CSVParser;
+import main.utils.Managers;   // это не лишний импорт, он нужен для создания объекта менеджера (по аналогии с 5 спринтом)
+import main.utils.TaskStatuses;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -26,7 +26,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() throws ManagerSaveException {
         try (final BufferedWriter bw = new BufferedWriter(new FileWriter(autoSaveFile.getFileName().toString()))) {
-            bw.write("id,type,name,status,description,epic\n");
+            bw.write("id,type,name,status,description, duration, startTime, endTime, epic\n");
             for (Task task : getTaskList()) { // сохранем в буфер все таски
                 bw.write(task.toString() + "\n");
             }
@@ -184,7 +184,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         /*Тестируем программу согласно ТЗ
         Создаем 2 задачи, эпик с 3 подзадачами и эпик без подзадач*/
 
-        manager.recordTasks(new Task("Задача №1", "Описание задачи №1"));
+        /*manager.recordTasks(new Task("Задача №1", "Описание задачи №1"));
         manager.recordTasks(new Task("Задача №2", "Описание задачи №2"));
         manager.recordEpics(new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1"));
         manager.recordSubtasks((new Subtask("Подзадача №1 эпика №1",
@@ -212,6 +212,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         // Создаём новый FileBackedTasksManager менеджер из этого же файла
 
-        loadFromFile(new File ("AutoSaveFile.csv"));
+        loadFromFile(new File ("AutoSaveFile.csv"));*/
     }
 }

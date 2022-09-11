@@ -1,6 +1,6 @@
-package historyManagement;
+package main.historyManagement;
 
-import tasks.Task;
+import main.tasks.Task;
 
 import java.util.List;
 

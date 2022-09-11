@@ -1,10 +1,10 @@
-package taskManagement;
+package main.taskManagement;
 
-import Exceptions.ManagerSaveException;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import utils.TaskStatuses;
+import main.Exceptions.ManagerSaveException;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+import main.utils.TaskStatuses;
 
 import java.util.ArrayList;
 import java.util.List;

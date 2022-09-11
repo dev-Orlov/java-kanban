@@ -1,5 +1,8 @@
-package tasks;
-import utils.TaskStatuses;
+package main.tasks;
+import main.utils.TaskStatuses;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Task {
 
@@ -9,12 +12,18 @@ public class Task {
     protected int id;
     public static int genId = 0;
     private final TasksType type = TasksType.TASK;
+    protected Duration duration;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, LocalDateTime startTime, int duration) {
         this.name = name;
         this.description = description;
         status = TaskStatuses.NEW;
         this.id = generateId();
+        this.startTime = startTime;
+        this.duration = Duration.ofMinutes(duration);
+        endTime = getEndTime();
     }
 
     private static int generateId() {
@@ -30,8 +39,24 @@ public class Task {
         return type;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     public void setId(int newId) {
         id = newId;
+    }
+
+    protected LocalDateTime convertEndTime() {
+        return startTime.plus(duration);
     }
 
     public void setStatus(TaskStatuses newStatus) {
@@ -56,6 +81,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return id + "," + type + "," + name + "," + status + "," + description;
+        return id + "," + type + "," + name + "," + status + "," + description +
+                "," + duration + "," + startTime + "," + endTime;
     }
 }

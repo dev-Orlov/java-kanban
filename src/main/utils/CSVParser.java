@@ -1,11 +1,11 @@
-package utils;
+package main.utils;
 
-import Exceptions.ManagerSaveException;
-import historyManagement.HistoryManager;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TasksType;
+import main.Exceptions.ManagerSaveException;
+import main.historyManagement.HistoryManager;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+import main.tasks.TasksType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CSVParser {
         int maxId = 0;  // необходимо выявить максимальный id загружаемых задач для дальнейшей генерации id
         switch (TasksType.valueOf(taskParameters[1])) {
             case TASK:
-                readingTask = new Task(taskParameters[2], taskParameters[4]);
+                readingTask = new Task(taskParameters[2], taskParameters[4], taskParameters[5] , taskParameters[6]);
                 readingTask.setId(Integer.parseInt(taskParameters[0]));
                 readingTask.setStatus(TaskStatuses.valueOf(taskParameters[3]));
                 if (Integer.parseInt(taskParameters[0]) > maxId) {

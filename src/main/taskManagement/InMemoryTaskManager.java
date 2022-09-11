@@ -1,10 +1,12 @@
-package taskManagement;
+package main.taskManagement;
 
-import Exceptions.ManagerSaveException;
-import historyManagement.HistoryManager;
-import tasks.*;
-import utils.*;
+import main.Exceptions.ManagerSaveException;
+import main.historyManagement.HistoryManager;
+import main.tasks.*;
+import main.utils.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void recordSubtasks(Subtask subtask, int epicId) throws ManagerSaveException {
         epics.get(epicId).recordSubtasks(subtask);
         checkEpicStatus(epicId);
+        setEpicTime(epicId);
     }
 
     @Override
@@ -76,6 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (int epicId : epics.keySet()) {
             epics.get(epicId).clearSubtasks();
             checkEpicStatus(epicId);
+            setEpicTime(epicId);
         }
     }
 
@@ -124,6 +128,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setStatus(status); // присвоили новому объекту новый статус
         epics.get(epicId).getSubtasks().put(id, subtask); // положили в HashMap эпика новый объект
         checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
+        setEpicTime(epicId);
     }
 
     private void checkEpicStatus(int epicId) {
@@ -168,6 +173,33 @@ public class InMemoryTaskManager implements TaskManager {
         return status;
     }
 
+    private void setEpicTime(int epicId) {
+        Duration duration = Duration.ofMinutes(0);
+        LocalDateTime startTime = LocalDateTime.of(999999999, 12, 31, 23, 59);;
+        LocalDateTime endTime = LocalDateTime.of(-999999999, 1, 1, 0, 0);;
+        // задаём переменные мин и макс поддерживаемого в классе LocalDateTime времени для дальнейшего сравнения
+
+        if (epics.get(epicId).getSubtasks().size() == 0) { // если у эпика нет подзадач, то даты и длительность = null
+            epics.get(epicId).setDuration(null);
+            epics.get(epicId).setStartTime(null);
+            epics.get(epicId).setEndTime(null);
+        } else {
+            for (int subtaskID : epics.get(epicId).getSubtasks().keySet()) {
+                duration = duration.plus(epics.get(epicId).getSubtasks().get(subtaskID).getDuration());
+                endTime = epics.get(epicId).getSubtasks().get(subtaskID).getEndTime();
+                if (epics.get(epicId).getSubtasks().get(subtaskID).getStartTime().isBefore(startTime)) {
+                    startTime = epics.get(epicId).getSubtasks().get(subtaskID).getStartTime();
+                }
+                if (epics.get(epicId).getSubtasks().get(subtaskID).getEndTime().isAfter(endTime)) {
+                    endTime = epics.get(epicId).getSubtasks().get(subtaskID).getEndTime();
+                }
+            }
+        }
+        epics.get(epicId).setDuration(duration);
+        epics.get(epicId).setStartTime(startTime);
+        epics.get(epicId).setEndTime(endTime);
+    }
+
     @Override
     public void removeTask(int id) throws ManagerSaveException {
         taskHistory.remove(id);
@@ -192,6 +224,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epicId = epics.get(findEpicId).getSubtasks().get(id).getEpicId(); // нашли id эпика
                 epics.get(epicId).getSubtasks().remove(id); // удалили сабтаск из HashMap
                 checkEpicStatus(epicId); // проверили и переписали, если требуется, статус  эпика
+                setEpicTime(epicId);
             }
         }
     }
