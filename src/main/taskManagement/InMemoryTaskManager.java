@@ -175,8 +175,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void setEpicTime(int epicId) {
         Duration duration = Duration.ofMinutes(0);
-        LocalDateTime startTime = LocalDateTime.of(999999999, 12, 31, 23, 59);;
-        LocalDateTime endTime = LocalDateTime.of(-999999999, 1, 1, 0, 0);;
+        LocalDateTime startTime = LocalDateTime.of(999999999, 12, 31, 23, 59);
+        LocalDateTime endTime = LocalDateTime.of(-999999999, 1, 1, 0, 0);
         // задаём переменные мин и макс поддерживаемого в классе LocalDateTime времени для дальнейшего сравнения
 
         if (epics.get(epicId).getSubtasks().size() == 0) { // если у эпика нет подзадач, то даты и длительность = null

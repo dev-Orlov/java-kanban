@@ -6,14 +6,14 @@ import main.tasks.Subtask;
 import main.tasks.Task;
 import main.tasks.TasksType;
 import main.utils.CSVParser;
-import main.utils.Managers;   // это не лишний импорт, он нужен для создания объекта менеджера (по аналогии с 5 спринтом)
+import main.utils.Managers;
 import main.utils.TaskStatuses;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -181,18 +181,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) throws ManagerSaveException {
         TaskManager manager = Managers.getFileManager();
 
-        /*Тестируем программу согласно ТЗ
-        Создаем 2 задачи, эпик с 3 подзадачами и эпик без подзадач*/
-
-        /*manager.recordTasks(new Task("Задача №1", "Описание задачи №1"));
-        manager.recordTasks(new Task("Задача №2", "Описание задачи №2"));
+        manager.recordTasks(new Task("Задача №1", "Описание задачи №1",
+                LocalDateTime.of(2022, 9, 12, 10, 0), 30));
+        manager.recordTasks(new Task("Задача №2", "Описание задачи №2",
+                LocalDateTime.of(2022, 9, 12, 14, 20), 360));
         manager.recordEpics(new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1"));
         manager.recordSubtasks((new Subtask("Подзадача №1 эпика №1",
-                "описание подзадачи №1 эпика №1",3)),3);
+                "описание подзадачи №1 эпика №1",
+                LocalDateTime.of(2022, 9, 1, 8, 0), 60, 3)), 3);
         manager.recordSubtasks((new Subtask("Подзадача №2 эпика №1",
-                "описание подзадачи №2 эпика №1",3)),3);
+                "описание подзадачи №2 эпика №1",
+                LocalDateTime.of(2022, 10, 13, 8, 0), 20, 3)), 3);
         manager.recordSubtasks((new Subtask("Подзадача №3 эпика №1",
-                "описание подзадачи №3 эпика №1",3)),3);
+                "описание подзадачи №3 эпика №1",
+                LocalDateTime.of(2022, 11, 20, 8, 0), 45, 3)), 3);
         manager.recordEpics(new Epic("Эпик №2 без подзадач", "Описание эпика №2"));
 
         // Запрашиваем задачи, чтобы заполнилась история просмотра
@@ -212,6 +214,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         // Создаём новый FileBackedTasksManager менеджер из этого же файла
 
-        loadFromFile(new File ("AutoSaveFile.csv"));*/
+        loadFromFile(new File ("AutoSaveFile.csv"));
     }
 }

@@ -3,6 +3,7 @@ import main.utils.TaskStatuses;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Task {
 
@@ -15,6 +16,7 @@ public class Task {
     protected Duration duration;
     protected LocalDateTime startTime;
     protected LocalDateTime endTime;
+    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy // HH:mm");
 
     public Task(String name, String description, LocalDateTime startTime, int duration) {
         this.name = name;
@@ -23,7 +25,7 @@ public class Task {
         this.id = generateId();
         this.startTime = startTime;
         this.duration = Duration.ofMinutes(duration);
-        endTime = getEndTime();
+        endTime = convertEndTime();
     }
 
     private static int generateId() {
@@ -56,7 +58,11 @@ public class Task {
     }
 
     protected LocalDateTime convertEndTime() {
-        return startTime.plus(duration);
+        if (startTime == null) {
+            return null;
+        } else {
+            return startTime.plus(duration);
+        }
     }
 
     public void setStatus(TaskStatuses newStatus) {
@@ -82,6 +88,6 @@ public class Task {
     @Override
     public String toString() {
         return id + "," + type + "," + name + "," + status + "," + description +
-                "," + duration + "," + startTime + "," + endTime;
+                "," + duration.toMinutes() + "," + startTime.format(formatter) + "," + endTime.format(formatter);
     }
 }

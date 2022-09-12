@@ -43,8 +43,12 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
+        if (startTime == null) {
+            return id + "," + type + "," + name + "," + status + "," + description +
+                    "," + "null" + "," + "null" + "," + "null";
+        }
         return id + "," + type + "," + name + "," + status + "," + description +
-                "," + duration + "," + startTime + "," + endTime;
+                "," + duration.toMinutes() + "," + startTime.format(formatter) + "," + endTime.format(formatter);
     }
     @Override
     public TasksType getType() {
@@ -53,6 +57,14 @@ public class Epic extends Task {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public void getStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void getEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public void setStartTime(LocalDateTime startTime) {

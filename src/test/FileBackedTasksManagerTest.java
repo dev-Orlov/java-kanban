@@ -22,7 +22,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         taskManager = Managers.getFileManager();
     }
 
-    @Test
+    /*@Test
     @DisplayName("Запись задач")
     void recordTasksTest() throws ManagerSaveException {
         Task task = createAndRecordTask();
@@ -32,6 +32,6 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals(TaskStatuses.NEW,  task.getStatus(), "Неверный статус.");
         assertEquals("Задача №1",  task.getName(), "Неверное название задачи");
         assertEquals(TasksType.TASK,  task.getType(), "Неверный тип задачи");
-    }
+    }*/
 
 }

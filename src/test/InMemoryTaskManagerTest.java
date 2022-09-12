@@ -22,7 +22,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager = new InMemoryTaskManager();
     }
 
-    @Test
+    /*@Test
     @DisplayName("Запись задач")
     void recordTasksTest() throws ManagerSaveException {
         Task task = createAndRecordTask();
@@ -32,5 +32,5 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(TaskStatuses.NEW,  task.getStatus(), "Неверный статус.");
         assertEquals("Задача №1",  task.getName(), "Неверное название задачи");
         assertEquals(TasksType.TASK,  task.getType(), "Неверный тип задачи");
-    }
+    }*/
 }
