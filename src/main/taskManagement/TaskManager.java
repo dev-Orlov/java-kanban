@@ -8,6 +8,7 @@ import main.utils.TaskStatuses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -48,6 +49,8 @@ public interface TaskManager {
     void removeSubtask(int id) throws ManagerSaveException;
 
     ArrayList<Subtask> getEpicIdSubtasks(int id);
+
+    public Set<Task> getPrioritizedTasks();
 
     public List<Task> getHistory();
 }

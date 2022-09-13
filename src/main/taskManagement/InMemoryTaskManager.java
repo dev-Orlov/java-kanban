@@ -7,9 +7,7 @@ import main.utils.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -20,7 +18,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void recordTasks(Task task) throws ManagerSaveException {
-        tasks.put(task.getId(), task);
+        if (checkingTaskTimeInterval(task)) {
+            tasks.put(task.getId(), task);
+        } else {
+            System.out.println("Задача с id " + task.getId() +
+                    " не записана, её время выполнения пересекается с уже созданными задачами");
+        }
     }
 
     @Override
@@ -30,9 +33,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void recordSubtasks(Subtask subtask, int epicId) throws ManagerSaveException {
-        epics.get(epicId).recordSubtasks(subtask);
-        checkEpicStatus(epicId);
-        setEpicTime(epicId);
+        if (checkingTaskTimeInterval(subtask)) {
+            epics.get(epicId).recordSubtasks(subtask);
+            checkEpicStatus(epicId);
+            setEpicTime(epicId);
+        } else {
+            System.out.println("Подзадача с id " + subtask.getId() +
+                    " не записана, её время выполнения пересекается с уже созданными задачами");
+        }
     }
 
     @Override
@@ -109,9 +117,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(int id, Task task, TaskStatuses status) throws ManagerSaveException {
-        task.setId(id);
-        tasks.put(id, task);
-        tasks.get(id).setStatus(status);
+        if (checkingTaskTimeInterval(task)) {
+            task.setId(id);
+            tasks.put(id, task);
+            tasks.get(id).setStatus(status);
+        } else {
+            System.out.println("Задача с id " + task.getId() +
+                    " не изменена, её новое время выполнения пересекается с уже созданными задачами");
+        }
     }
 
     @Override
@@ -122,13 +135,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(int id, Subtask subtask, TaskStatuses status) throws ManagerSaveException {
-        subtask.setId(id);
-        int epicId = subtask.getEpicId();
-        epics.get(epicId).getSubtasks().remove(id); // удалили сабтаск из HashMap в классе эпик
-        subtask.setStatus(status); // присвоили новому объекту новый статус
-        epics.get(epicId).getSubtasks().put(id, subtask); // положили в HashMap эпика новый объект
-        checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
-        setEpicTime(epicId);
+        if (checkingTaskTimeInterval(subtask)) {
+            subtask.setId(id);
+            int epicId = subtask.getEpicId();
+            epics.get(epicId).getSubtasks().remove(id); // удалили сабтаск из HashMap в классе эпик
+            subtask.setStatus(status); // присвоили новому объекту новый статус
+            epics.get(epicId).getSubtasks().put(id, subtask); // положили в HashMap эпика новый объект
+            checkEpicStatus(epicId); // проверили и переписали, если требуется, статус соответстующего эпика
+            setEpicTime(epicId);
+        } else {
+            System.out.println("Подзадача с id " + subtask.getId() +
+                    " не изменена, её новое время выполнения пересекается с уже созданными задачами");
+        }
     }
 
     private void checkEpicStatus(int epicId) {
@@ -236,6 +254,48 @@ public class InMemoryTaskManager implements TaskManager {
             epicIdSubtasks.add(epics.get(id).getSubtasks().get(subtaskId));
         }
         return epicIdSubtasks;
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        Comparator<Task> taskTimeComparator = new Comparator<>() {
+            @Override
+            public int compare(Task task1, Task task2) {
+                if (task1.getStartTime() == null) {
+                    return 1;
+                } else if (task2.getStartTime() == null) {
+                    return -1;
+                } else {
+                    return task1.getStartTime().compareTo(task2.getStartTime());
+                }
+            }
+        };
+
+        Set<Task> priorityTaskList = new TreeSet<>(taskTimeComparator);
+        priorityTaskList.addAll(getTaskList());
+        priorityTaskList.addAll(getSubtaskList());
+        return priorityTaskList;
+    }
+
+    private boolean checkingTaskTimeInterval(Task task) {
+        if (task.getStartTime() != null || task.getEndTime() != null) {
+            for (Task checkingTask : getPrioritizedTasks()) {
+                if (task.getStartTime().equals(checkingTask.getStartTime()) ||
+                        task.getEndTime().equals(checkingTask.getEndTime())) {
+                    return false;
+                } else if ((task.getStartTime().isBefore(checkingTask.getStartTime())
+                        && task.getEndTime().isAfter(checkingTask.getStartTime()))) {
+                    return false;
+                } else if ((task.getStartTime().isBefore(checkingTask.getEndTime())
+                        && task.getEndTime().isAfter(checkingTask.getEndTime()))) {
+                    return false;
+                } else if ((task.getStartTime().isAfter(checkingTask.getStartTime())
+                        && task.getEndTime().isBefore(checkingTask.getEndTime()))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public List<Task> getHistory() {
