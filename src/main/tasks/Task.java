@@ -33,6 +33,10 @@ public class Task {
         return genId;
     }
 
+    public static void setGenId(int changedID) {
+        genId = changedID;
+    }
+
     public int getId() {
         return(id);
     }

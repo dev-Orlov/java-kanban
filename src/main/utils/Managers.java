@@ -18,6 +18,10 @@ public class Managers {
         return new FileBackedTasksManager(Paths.get("AutoSaveFile.csv"));
     }
 
+    public static FileBackedTasksManager getTestFileManager() {
+        return new FileBackedTasksManager(Paths.get("TestFile.csv"));
+    }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
