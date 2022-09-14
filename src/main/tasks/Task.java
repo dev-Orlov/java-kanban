@@ -21,11 +21,11 @@ public class Task {
     public Task(String name, String description, LocalDateTime startTime, int duration) {
         this.name = name;
         this.description = description;
-        status = TaskStatuses.NEW;
+        this.status = TaskStatuses.NEW;
         this.id = generateId();
         this.startTime = startTime;
         this.duration = Duration.ofMinutes(duration);
-        endTime = convertEndTime();
+        this.endTime = convertEndTime();
     }
 
     private static int generateId() {

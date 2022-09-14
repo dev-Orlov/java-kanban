@@ -28,16 +28,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2025, 9, 12, 10, 0), 30));
         taskManager.recordTasks(new Task("Задача №2", "Описание задачи №2",
                 LocalDateTime.of(2024, 9, 12, 14, 20), 360));
-        taskManager.recordEpics(new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1"));
+        Epic epic1 = new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1");
+        taskManager.recordEpics(epic1);
         taskManager.recordSubtasks((new Subtask("Подзадача №1 эпика №1",
                 "описание подзадачи №1 эпика №1",
-                LocalDateTime.of(2023, 9, 1, 8, 0), 60, 3)), 3);
+                LocalDateTime.of(2023, 9, 1, 8, 0),
+                60, epic1.getId())), epic1.getId());
         taskManager.recordSubtasks((new Subtask("Подзадача №2 эпика №1",
                 "описание подзадачи №2 эпика №1",
-                LocalDateTime.of(2022, 10, 13, 8, 0), 20, 3)), 3);
+                LocalDateTime.of(2022, 10, 13, 8, 0),
+                20, epic1.getId())), epic1.getId());
         taskManager.recordSubtasks((new Subtask("Подзадача №3 эпика №1",
                 "описание подзадачи №3 эпика №1",
-                LocalDateTime.of(2021, 11, 20, 8, 0), 45, 3)), 3);
+                LocalDateTime.of(2021, 11, 20, 8, 0),
+                45, epic1.getId())), epic1.getId());
         taskManager.recordEpics(new Epic("Эпик №2 без подзадач", "Описание эпика №2"));
     }
 

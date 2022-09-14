@@ -12,7 +12,7 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description, null, 0);
         // согласно ТЗ у эпика появляются параметры времени только после создания сабтасков
-        subtasks = new HashMap<>();
+        this.subtasks = new HashMap<>();
     }
 
     public void recordSubtasks(Subtask subtask) {
