@@ -38,7 +38,7 @@ public interface TaskManager {
 
     void updateTask(int id, Task task, TaskStatuses status) throws ManagerSaveException;
 
-    void updateEpic(int id, Epic epic, String status) throws ManagerSaveException;
+    void updateEpic(int id, Epic epic) throws ManagerSaveException;
 
     void updateSubtask(int id, Subtask subtask, TaskStatuses status) throws ManagerSaveException;
 

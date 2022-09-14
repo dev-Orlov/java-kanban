@@ -150,8 +150,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateEpic(int id, Epic epic, String status) throws ManagerSaveException {
-        super.updateEpic(id, epic, status);
+    public void updateEpic(int id, Epic epic) throws ManagerSaveException {
+        super.updateEpic(id, epic);
         save();
     }
 

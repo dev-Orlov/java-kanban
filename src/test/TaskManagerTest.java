@@ -5,9 +5,12 @@ import main.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;
+import main.utils.TaskStatuses;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,35 +88,35 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Тест получения задач")
     public void getTaskListTest() throws ManagerSaveException {
-        assertEquals(taskManager.getTaskList().size(), 2);
+        assertEquals(2, taskManager.getTaskList().size());
 
         taskManager.removeTasks();
-        assertEquals(taskManager.getTaskList().size(), 0);
+        assertEquals(0, taskManager.getTaskList().size());
     }
 
     @Test
     @DisplayName("Тест получения эпиков")
     public void getEpicListTest() throws ManagerSaveException {
-        assertEquals(taskManager.getEpicList().size(), 2);
+        assertEquals(2, taskManager.getEpicList().size());
 
         taskManager.removeEpics();
-        assertEquals(taskManager.getEpicList().size(), 0);
+        assertEquals(0, taskManager.getEpicList().size());
     }
 
     @Test
     @DisplayName("Тест получения подзадач")
     public void getSubtaskListTest() throws ManagerSaveException {
-        assertEquals(taskManager.getSubtaskList().size(), 3);
+        assertEquals(3, taskManager.getSubtaskList().size());
 
         taskManager.removeEpics();
-        assertEquals(taskManager.getSubtaskList().size(), 0);
+        assertEquals(0, taskManager.getSubtaskList().size());
     }
 
     @Test
     @DisplayName("Тест удаления задач")
     public void removeTasksTest() throws ManagerSaveException {
         taskManager.removeTasks();
-        assertEquals(taskManager.getTaskList().size(), 0);
+        assertEquals(0, taskManager.getTaskList().size());
 
         assertThrows(IndexOutOfBoundsException.class, () -> taskManager.getTaskList().get(0));
     }
@@ -122,7 +125,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Тест удаления эпиков")
     public void removeEpicsTest() throws ManagerSaveException {
         taskManager.removeEpics();
-        assertEquals(taskManager.getEpicList().size(), 0);
+        assertEquals(0, taskManager.getEpicList().size());
 
         assertThrows(IndexOutOfBoundsException.class, () -> taskManager.getEpicList().get(0));
     }
@@ -131,7 +134,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @DisplayName("Тест удаления подзадач")
     public void removeSubtasksTest() throws ManagerSaveException {
         taskManager.removeSubtasks();
-        assertEquals(taskManager.getSubtaskList().size(), 0);
+        assertEquals(0, taskManager.getSubtaskList().size());
 
         assertThrows(IndexOutOfBoundsException.class, () -> taskManager.getSubtaskList().get(0));
     }
@@ -143,7 +146,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2022, 1, 1, 10, 0), 30);
 
         taskManager.recordTasks(task);
-        assertEquals(taskManager.getTaskById(8), task);
+        assertEquals(task, taskManager.getTaskById(8));
 
         assertNull(taskManager.getTaskById(-1));
 
@@ -157,7 +160,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = new Epic("Тестовый эпик", "Описание тестового эпика");
 
         taskManager.recordEpics(epic);
-        assertEquals(taskManager.getEpicById(8), epic);
+        assertEquals(epic, taskManager.getEpicById(8));
 
         assertNull(taskManager.getEpicById(-1));
 
@@ -168,14 +171,128 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Тест получения подзадачи по id")
     public void getSubtaskByIdTest() throws ManagerSaveException {
-        Epic epic = new Epic("Тестовый эпик", "Описание тестового эпика");
+        Subtask subtask = new Subtask("Подзадача тестового эпика",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 11, 15, 2, 3), 45, 3);
 
-        taskManager.recordEpics(epic);
-        assertEquals(taskManager.getEpicById(8), epic);
+        taskManager.recordSubtasks(subtask, 3);
+        assertEquals(subtask, taskManager.getSubtaskById(8));
+
+        assertThrows(NullPointerException.class, () -> taskManager.getSubtaskById(-1));
+
+        taskManager.removeSubtasks();
+        assertThrows(NullPointerException.class, () -> taskManager.getSubtaskById(8));
+    }
+
+    @Test
+    @DisplayName("Тест обновления задачи")
+    public void updateTaskTest() throws ManagerSaveException {
+        Task task = new Task("Тестовая задача", "Описание тестовой задачи",
+                LocalDateTime.of(2022, 1, 1, 10, 0), 30);
+        taskManager.updateTask(1, task, TaskStatuses.IN_PROGRESS);
+        assertEquals(task, taskManager.getTaskById(1));
+
+        assertThrows(NullPointerException.class, () -> taskManager.updateTask(-1, null, null));
+
+        taskManager.removeTasks();
+        taskManager.updateTask(1, task, TaskStatuses.IN_PROGRESS);
+        assertEquals(task, taskManager.getTaskById(1));
+    }
+
+    @Test
+    @DisplayName("Тест обновления эпика")
+    public void updateEpicTest() throws ManagerSaveException {
+        Epic epic = new Epic("Тестовый эпик", "Описание тестового эпика");
+        taskManager.updateEpic(3, epic);
+        assertEquals(epic, taskManager.getEpicById(3));
+
+        assertThrows(NullPointerException.class, () -> taskManager.updateEpic(-1, null));
+
+        taskManager.removeEpics();
+        taskManager.updateEpic(3, epic);
+        assertEquals(epic, taskManager.getEpicById(3));
+    }
+
+    @Test
+    @DisplayName("Тест обновления подзадачи")
+    public void updateSubtaskTest() throws ManagerSaveException {
+        Subtask subtask = new Subtask("Подзадача тестового эпика",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 11, 15, 2, 3), 45, 3);
+        taskManager.updateSubtask(4, subtask, TaskStatuses.IN_PROGRESS);
+        assertEquals(subtask, taskManager.getSubtaskById(4));
+
+        assertThrows(NullPointerException.class, () -> taskManager.updateSubtask(-1, null, null));
+
+        taskManager.removeSubtasks();
+        taskManager.updateSubtask(4, subtask, TaskStatuses.IN_PROGRESS);
+        assertEquals(subtask, taskManager.getSubtaskById(4));
+    }
+
+    @Test
+    @DisplayName("Тест удаления задачи")
+    public void removeTaskTest() throws ManagerSaveException {
+        taskManager.removeTask(1);
+        assertNull(taskManager.getTaskById(1));
+
+        assertNull(taskManager.getTaskById(-1));
+
+        taskManager.removeTasks();
+        assertNull(taskManager.getTaskById(2));
+    }
+
+    @Test
+    @DisplayName("Тест удаления эпика")
+    public void removeEpicTest() throws ManagerSaveException {
+        taskManager.removeEpic(3);
+        assertNull(taskManager.getEpicById(3));
 
         assertNull(taskManager.getEpicById(-1));
 
         taskManager.removeEpics();
-        assertNull(taskManager.getEpicById(8));
+        assertNull(taskManager.getEpicById(7));
+    }
+
+    @Test
+    @DisplayName("Тест удаления подзадачи")
+    public void removeSubtaskTest() throws ManagerSaveException {
+        taskManager.removeSubtask(4);
+        assertThrows(NullPointerException.class, () -> taskManager.getSubtaskById(4));
+
+        assertThrows(NullPointerException.class, () -> taskManager.getSubtaskById(-1));
+
+        taskManager.removeSubtasks();
+        assertThrows(NullPointerException.class, () -> taskManager.getSubtaskById(5));
+    }
+
+    @Test
+    @DisplayName("Тест получения подзадач эпика")
+    public void getEpicIdSubtasksTest() throws ManagerSaveException {
+        assertEquals(taskManager.getSubtaskList(), taskManager.getEpicIdSubtasks(3));
+
+        assertThrows(NullPointerException.class, () -> taskManager.getEpicIdSubtasks(-1));
+
+        taskManager.removeSubtasks();
+        ArrayList<Subtask> epicIdSubtasks = new ArrayList<>();
+        assertEquals(epicIdSubtasks, taskManager.getEpicIdSubtasks(3));
+    }
+
+    @Test
+    @DisplayName("Тест получения списка истории задач")
+    public void getHistoryTest() throws ManagerSaveException {
+        List<Integer> resultHistoryId = new ArrayList<>();
+        List<Integer> correctHistoryId = List.of(1, 2, 6);
+        taskManager.getTaskById(2);
+        taskManager.getSubtaskById(6);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        for (Task task : taskManager.getHistory()) {
+            resultHistoryId.add(task.getId());
+        }
+        assertEquals(correctHistoryId, resultHistoryId);
+
+        clearTaskLists();
+        assertEquals(new ArrayList<>(), taskManager.getHistory());
     }
 }

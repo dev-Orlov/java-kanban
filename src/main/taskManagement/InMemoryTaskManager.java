@@ -74,20 +74,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTasks() throws ManagerSaveException {
-        tasks.clear();
+        for (Task task : getTaskList()) {
+            removeTask(task.getId());
+        }
     }
 
     @Override
     public void removeEpics() throws ManagerSaveException {
-        epics.clear();
+        for (Epic epic : getEpicList()) {
+            removeEpic(epic.getId());
+        }
     }
 
     @Override
     public void removeSubtasks() throws ManagerSaveException {
-        for (int epicId : epics.keySet()) {
-            epics.get(epicId).clearSubtasks();
-            checkEpicStatus(epicId);
-            setEpicTime(epicId);
+        for (Subtask subtask : getSubtaskList()) {
+            removeSubtask(subtask.getId());
         }
     }
 
@@ -128,7 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(int id, Epic epic, String status) throws ManagerSaveException {
+    public void updateEpic(int id, Epic epic) throws ManagerSaveException {
         epic.setId(id);
         epics.put(id, epic);
     }
