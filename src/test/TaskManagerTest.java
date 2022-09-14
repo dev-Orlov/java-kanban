@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -294,5 +295,46 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         clearTaskLists();
         assertEquals(new ArrayList<>(), taskManager.getHistory());
+    }
+
+    @Test
+    @DisplayName("Проверяем наличие эпика у подзадач")
+    public void checkingEpicInSubtasksTest() throws ManagerSaveException {
+        for (Subtask subtask : taskManager.getSubtaskList()) {
+            assertTrue(taskManager.getEpicList().contains(taskManager.getEpicById(subtask.getEpicId())));
+            assertFalse(taskManager.getEpicList().contains(taskManager.getEpicById(subtask.getEpicId() * (-1))));
+        }
+    }
+
+    @Test
+    @DisplayName("Проверяем расчет статуса эпика")
+    public void checkingComputationEpicStatusTest() throws ManagerSaveException {
+        Epic epic = new Epic("Тестовый эпик", "Описание тестового эпика");
+        taskManager.recordEpics(epic);
+        assertEquals(TaskStatuses.NEW, epic.getStatus()); //расчет без подзадач
+
+        Subtask subtask1 = new Subtask("Подзадача тестового эпика 1",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 11, 15, 2, 3), 45, 8);
+        Subtask subtask2 = new Subtask("Подзадача тестового эпика 2",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 6, 15, 2, 3), 45, 8);
+        assertEquals(TaskStatuses.NEW, epic.getStatus()); //расчет с NEW подзадачами
+
+        taskManager.updateSubtask(10, subtask2, TaskStatuses.DONE);
+        assertEquals(TaskStatuses.DONE, epic.getStatus()); //расчет с NEW и DONE подзадачами
+
+        taskManager.removeSubtask(9);
+        assertEquals(TaskStatuses.DONE, epic.getStatus()); //расчет с DONE подзадачами
+
+        Subtask subtask3 = new Subtask("Подзадача тестового эпика 1",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 4, 15, 2, 3), 45, 8);
+        taskManager.updateSubtask(11, subtask3, TaskStatuses.IN_PROGRESS);
+        taskManager.updateSubtask(10, new Subtask("Подзадача тестового эпика 2",
+                "описание подзадачи тестового эпика",
+                LocalDateTime.of(2022, 8, 15, 2, 3), 45, 8),
+                TaskStatuses.IN_PROGRESS);
+        assertEquals(TaskStatuses.IN_PROGRESS, epic.getStatus()); //расчет с IN_PROGRESS подзадачами
     }
 }
