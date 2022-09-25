@@ -62,11 +62,11 @@ public class CSVParser {
     }
 
     public static LocalDateTime localDateTimeFromString(String value) {
-        String[] localDateTimeParts = value.split("//");
-        String[] dateParts = localDateTimeParts[0].split("/");
+        String[] localDateTimeParts = value.split("T");
+        String[] dateParts = localDateTimeParts[0].split("-");
         String[] timeParts = localDateTimeParts[1].split(":");
-        return LocalDateTime.of(Integer.parseInt(dateParts[2].trim()), Integer.parseInt(dateParts[1].trim()),
-                Integer.parseInt(dateParts[0].trim()), Integer.parseInt(timeParts[0].trim()),
+        return LocalDateTime.of(Integer.parseInt(dateParts[0].trim()), Integer.parseInt(dateParts[1].trim()),
+                Integer.parseInt(dateParts[2].trim()), Integer.parseInt(timeParts[0].trim()),
                 Integer.parseInt(timeParts[1].trim()));
     }
 

@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.util.ArrayList;
 
-
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
     File file = new File("TestFile.csv");

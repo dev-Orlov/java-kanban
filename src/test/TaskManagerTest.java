@@ -78,16 +78,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Тест записи подзадачи")
     public void recordSubtasksTest() throws ManagerSaveException {
+        Epic epic3 = new Epic("Эпик №3", "Для теста записи подзадачи");
+        taskManager.recordEpics(epic3);
         Subtask subtask = new Subtask("Подзадача тестового эпика",
                 "описание подзадачи тестового эпика",
-                LocalDateTime.of(2022, 11, 15, 2, 3), 45, 3);
+                LocalDateTime.of(2022, 11, 15, 2, 3), 45, epic3.getId());
 
         assertThrows(NullPointerException.class, () -> taskManager.recordSubtasks(subtask, -1));
 
-        taskManager.recordSubtasks(subtask, 3);
+        taskManager.recordSubtasks(subtask, epic3.getId());
         assertTrue(taskManager.getSubtaskList().contains(subtask));
 
-        assertThrows(NullPointerException.class, () -> taskManager.recordSubtasks(null, 3));
+        assertThrows(NullPointerException.class, () -> taskManager.recordSubtasks(null, epic3.getId()));
     }
 
     @Test

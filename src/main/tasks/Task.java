@@ -12,11 +12,10 @@ public class Task {
     protected TaskStatuses status;
     protected int id;
     public static int genId = 0;
-    private final TasksType type = TasksType.TASK;
+    protected TasksType type;
     protected Duration duration;
     protected LocalDateTime startTime;
     protected LocalDateTime endTime;
-    protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy // HH:mm");
 
     public Task(String name, String description, LocalDateTime startTime, int duration) {
         this.name = name;
@@ -26,6 +25,7 @@ public class Task {
         this.startTime = startTime;
         this.duration = Duration.ofMinutes(duration);
         this.endTime = convertEndTime();
+        this.type = TasksType.TASK;
     }
 
     private static int generateId() {
@@ -92,6 +92,6 @@ public class Task {
     @Override
     public String toString() {
         return id + "," + type + "," + name + "," + status + "," + description +
-                "," + duration.toMinutes() + "," + startTime.format(formatter) + "," + endTime.format(formatter);
+                "," + duration.toMinutes() + "," + startTime + "," + endTime;
     }
 }

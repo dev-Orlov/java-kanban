@@ -78,8 +78,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /*тут не нужны пересчет времени эпика и проверка его статуса. Всё это есть в методе removeSubtask, который
-    вызывается из данного метода*/
     @Override
     public void removeSubtasks() throws ManagerSaveException {
         for (Subtask subtask : getSubtaskList()) {
@@ -229,8 +227,6 @@ public class InMemoryTaskManager implements TaskManager {
         epics.remove(id);
     }
 
-    /*если под вторым одинаковым методом имелся в виду removeSubtasks, то это ж не одинаковые методы
-    согласно прошлым ТЗ, нужны отдельные методы удаления всех сабтасков сразу и удаления отдельного по id*/
     @Override
     public void removeSubtask(int id) throws ManagerSaveException {
         taskHistory.remove(id);

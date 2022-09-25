@@ -7,12 +7,12 @@ import java.util.HashMap;
 public class Epic extends Task {
 
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final TasksType type = TasksType.EPIC;
 
     public Epic(String name, String description) {
         super(name, description, null, 0);
         // согласно ТЗ у эпика появляются параметры времени только после создания сабтасков
         this.subtasks = new HashMap<>();
+        type = TasksType.EPIC;
     }
 
     public void recordSubtasks(Subtask subtask) {
@@ -48,8 +48,9 @@ public class Epic extends Task {
                     "," + "null" + "," + "null" + "," + "null";
         }
         return id + "," + type + "," + name + "," + status + "," + description +
-                "," + duration.toMinutes() + "," + startTime.format(formatter) + "," + endTime.format(formatter);
+                "," + duration.toMinutes() + "," + startTime + "," + endTime;
     }
+
     @Override
     public TasksType getType() {
         return type;
