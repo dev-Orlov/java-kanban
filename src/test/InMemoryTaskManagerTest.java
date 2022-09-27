@@ -8,6 +8,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Override
     public InMemoryTaskManager createTestManager() {
-        return Managers.getDefault();
+        return Managers.getMemoryManager();
     }
 }

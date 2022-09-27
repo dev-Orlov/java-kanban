@@ -1,6 +1,7 @@
 package test;
 
 import main.Exceptions.ManagerSaveException;
+import main.Httpserver.KVServer;
 import main.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
@@ -8,6 +9,7 @@ import main.tasks.Task;
 import main.utils.TaskStatuses;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
 
     abstract T createTestManager();
+    protected KVServer kvServer;
 
     @BeforeEach
-    protected void initTasks() throws ManagerSaveException {
+    protected void initTasks() throws ManagerSaveException, IOException {
+        kvServer = new KVServer();
+        kvServer.start();
         taskManager = createTestManager();
         taskManager.recordTasks(new Task("Задача №1", "Описание задачи №1",
                 LocalDateTime.of(2025, 9, 12, 10, 0), 30));
@@ -50,6 +55,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.removeTasks();
         taskManager.removeEpics();
         Task.setGenId(0);    // обнуляем генерируемый id, чтобы статический счетчик начал отсчет заново
+        kvServer.stop();
     }
 
     @Test
@@ -299,7 +305,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         }
         assertEquals(correctHistoryId, resultHistoryId);
 
-        clearTaskLists();
+        taskManager.removeTasks();
+        taskManager.removeEpics();
         assertEquals(new ArrayList<>(), taskManager.getHistory());
     }
 

@@ -20,6 +20,10 @@ public class Managers {
         return new HttpTaskManager("http://localhost:8078/");
     }
 
+    public static InMemoryTaskManager getMemoryManager() {
+        return new InMemoryTaskManager();
+    }
+
     public static FileBackedTasksManager getFileManager() {
         return new FileBackedTasksManager(Paths.get("AutoSaveFile.csv"));
     }

@@ -7,15 +7,11 @@ import main.Httpserver.KVTaskClient;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;
-import main.tasks.TasksType;
 
 import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HttpTaskManager extends FileBackedTasksManager {
 
@@ -57,10 +53,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 tasks.put(taskId, serializedTasks.get(taskId));
         }
 
-        Type histotyType =  new TypeToken<List<Task>>(){}.getType();
-        List<Task> history = gson.fromJson(client.load("history"), histotyType);
-        for (Task task : history) {
-            taskHistory.add(task);
+        Type historyType =  new TypeToken<List<Task>>(){}.getType();
+        List<Task> history = gson.fromJson(client.load("history"), historyType);
+        for (int i = history.size() - 1; i >= 0; i--) {
+            taskHistory.add(history.get(i));
         }
     }
 }
