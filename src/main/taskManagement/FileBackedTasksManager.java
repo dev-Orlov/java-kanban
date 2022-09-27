@@ -24,7 +24,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.autoSaveFile = autoSaveFile;
     }
 
-    private void save() throws ManagerSaveException {
+    protected void save() throws ManagerSaveException {
         try (final BufferedWriter bw = new BufferedWriter(new FileWriter(autoSaveFile.getFileName().toString()))) {
             bw.write("id,type,name,status,description, duration, startTime, endTime, epic\n");
             for (Task task : getTaskList()) { // сохранем в буфер все таски

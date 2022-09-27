@@ -1,4 +1,4 @@
-package main.utils;
+package main.Httpserver;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -9,6 +9,8 @@ import main.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;
+import main.utils.Managers;
+import main.utils.TaskStatuses;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,24 +31,11 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws IOException, ManagerSaveException {
         HttpServer httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress( PORT), 0);
+        httpServer.bind(new InetSocketAddress("localhost",  PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler());
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
-        Epic epic4 = new Epic("Эпик №1 с тремя подзадачами", "Описание эпика №1");
-        epic4.setId(3);
-        manager.recordEpics(epic4);
-        Subtask subtask2 = new Subtask("Подзадача №1 эпика №1",
-                "описание подзадачи №1 эпика №1",
-                LocalDateTime.of(2023, 9, 1, 8, 0), 60, 3);
-        manager.recordSubtasks(subtask2, 3);
-        Task task4 = new Task("Задача №1", "Описание задачи №1",
-                LocalDateTime.of(2025, 9, 12, 10, 0), 30);
-        manager.recordTasks(task4);
-        Gson gson6 = new Gson();                                                                // тестовый код удалить!!!!!!!
-        manager.getEpicById(1);
-        manager.getTaskById(3);
     }
 
     static class TasksHandler implements HttpHandler {

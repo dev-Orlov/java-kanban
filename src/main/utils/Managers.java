@@ -9,18 +9,15 @@ import com.google.gson.stream.JsonWriter;
 import main.historyManagement.HistoryManager;
 import main.historyManagement.InMemoryHistoryManager;
 import main.taskManagement.FileBackedTasksManager;
+import main.taskManagement.HttpTaskManager;
 import main.taskManagement.InMemoryTaskManager;
 
-import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Managers {
 
-    public static InMemoryTaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static HttpTaskManager getDefault() {
+        return new HttpTaskManager("http://localhost:8078/");
     }
 
     public static FileBackedTasksManager getFileManager() {
