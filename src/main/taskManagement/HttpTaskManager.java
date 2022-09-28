@@ -37,7 +37,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public void load() throws ManagerSaveException {
 
-        Type epicType =  new TypeToken<HashMap<Integer, Epic>>(){}.getType();
+        Type epicType = new TypeToken<HashMap<Integer, Epic>>(){}.getType();
         HashMap<Integer, Epic> serializedEpics = gson.fromJson(client.load("epics"), epicType);
         for (int epicId : serializedEpics.keySet()) {
             epics.put(epicId, serializedEpics.get(epicId));
@@ -47,13 +47,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
 
 
-        Type taskType =  new TypeToken<HashMap<Integer, Task>>(){}.getType();
+        Type taskType = new TypeToken<HashMap<Integer, Task>>(){}.getType();
         HashMap<Integer, Task> serializedTasks = gson.fromJson(client.load("tasks"), taskType);
         for (int taskId : serializedTasks.keySet()) {
                 tasks.put(taskId, serializedTasks.get(taskId));
         }
 
-        Type historyType =  new TypeToken<List<Task>>(){}.getType();
+        Type historyType = new TypeToken<List<Task>>(){}.getType();
         List<Task> history = gson.fromJson(client.load("history"), historyType);
         for (int i = history.size() - 1; i >= 0; i--) {
             taskHistory.add(history.get(i));

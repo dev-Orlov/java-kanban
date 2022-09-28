@@ -4,6 +4,7 @@ import main.utils.TaskStatuses;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
 
@@ -93,5 +94,20 @@ public class Task {
     public String toString() {
         return id + "," + type + "," + name + "," + status + "," + description +
                 "," + duration.toMinutes() + "," + startTime + "," + endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
+                && status == task.status && type == task.type && Objects.equals(duration, task.duration) &&
+                Objects.equals(startTime, task.startTime) && Objects.equals(endTime, task.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, status, id, type, duration, startTime, endTime);
     }
 }

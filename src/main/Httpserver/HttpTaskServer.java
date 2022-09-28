@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import main.Exceptions.ManagerSaveException;
+import main.taskManagement.HttpTaskManager;
 import main.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
@@ -26,14 +27,19 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final TaskManager manager = Managers.getFileManager();
+    private static HttpServer httpServer;
 
-    public static void main(String[] args) throws IOException, ManagerSaveException {
-        HttpServer httpServer = HttpServer.create();
+    public void startServer() throws IOException, ManagerSaveException {
+        httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress("localhost",  PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler());
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+    }
+
+    public void stopServer() {
+        httpServer.stop(1);
     }
 
     static class TasksHandler implements HttpHandler {
