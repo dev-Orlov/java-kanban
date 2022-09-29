@@ -1,16 +1,10 @@
 package main.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.maps.internal.DurationAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import main.historyManagement.HistoryManager;
-import main.historyManagement.InMemoryHistoryManager;
-import main.taskManagement.FileBackedTasksManager;
-import main.taskManagement.HttpTaskManager;
-import main.taskManagement.InMemoryTaskManager;
+import management.historyManagement.HistoryManager;
+import management.historyManagement.InMemoryHistoryManager;
+import management.taskManagement.FileBackedTasksManager;
+import management.taskManagement.HttpTaskManager;
+import management.taskManagement.InMemoryTaskManager;
 
 import java.nio.file.Paths;
 

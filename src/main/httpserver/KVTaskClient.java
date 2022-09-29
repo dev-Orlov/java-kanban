@@ -1,4 +1,4 @@
-package main.Httpserver;
+package main.httpserver;
 
 import java.net.URI;
 import java.net.http.HttpClient;

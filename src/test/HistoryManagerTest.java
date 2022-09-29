@@ -1,7 +1,7 @@
 package test;
 
-import main.Exceptions.ManagerSaveException;
-import main.historyManagement.HistoryManager;
+import main.exceptions.ManagerSaveException;
+import management.historyManagement.HistoryManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;

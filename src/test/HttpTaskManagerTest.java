@@ -1,7 +1,7 @@
 package test;
 
-import main.Exceptions.ManagerSaveException;
-import main.taskManagement.HttpTaskManager;
+import main.exceptions.ManagerSaveException;
+import management.taskManagement.HttpTaskManager;
 import main.tasks.Epic;
 import main.utils.Managers;
 import org.junit.jupiter.api.DisplayName;

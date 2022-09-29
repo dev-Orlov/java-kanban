@@ -2,8 +2,8 @@ package test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import main.Exceptions.ManagerSaveException;
-import main.Httpserver.HttpTaskServer;
+import main.exceptions.ManagerSaveException;
+import main.httpserver.HttpTaskServer;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;

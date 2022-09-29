@@ -1,7 +1,7 @@
 package test;
 
-import main.Exceptions.ManagerSaveException;
-import main.taskManagement.FileBackedTasksManager;
+import main.exceptions.ManagerSaveException;
+import management.taskManagement.FileBackedTasksManager;
 
 import main.tasks.Epic;
 import main.utils.Managers;

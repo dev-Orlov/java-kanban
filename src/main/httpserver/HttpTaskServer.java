@@ -1,12 +1,11 @@
-package main.Httpserver;
+package main.httpserver;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import main.Exceptions.ManagerSaveException;
-import main.taskManagement.HttpTaskManager;
-import main.taskManagement.TaskManager;
+import main.exceptions.ManagerSaveException;
+import management.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;
@@ -26,7 +25,7 @@ import java.util.Set;
 public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    public static final TaskManager manager = Managers.getFileManager();
+    public static final TaskManager MANAGER = Managers.getFileManager();
     private static HttpServer httpServer;
 
     public void startServer() throws IOException, ManagerSaveException {
@@ -64,11 +63,11 @@ public class HttpTaskServer {
 
             switch (method) {
                 case "POST":
-                    if (splitString[2].equals("task")) {
+                    if ("task".equals(splitString[2])) {
                         Task task = gson.fromJson(body, Task.class);
                         if (id < 0) { //recordTasks
                             try {
-                                manager.recordTasks(task);
+                                MANAGER.recordTasks(task);
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -79,22 +78,22 @@ public class HttpTaskServer {
                                 int beginIndexOfFindStatus = body.indexOf("status");
                                 String findStatus = body.substring(beginIndexOfFindStatus);
                                 if (body.contains("NEW")) {
-                                    manager.updateTask(id, task, TaskStatuses.NEW);
+                                    MANAGER.updateTask(id, task, TaskStatuses.NEW);
                                 } else if (body.contains("IN_PROGRESS")) {
-                                    manager.updateTask(id, task, TaskStatuses.IN_PROGRESS);
+                                    MANAGER.updateTask(id, task, TaskStatuses.IN_PROGRESS);
                                 } else if (body.contains("DONE")) {
-                                    manager.updateTask(id, task, TaskStatuses.DONE);
+                                    MANAGER.updateTask(id, task, TaskStatuses.DONE);
                                 }
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         }
-                    } else if (splitString[2].equals("subtask")) {
+                    } else if ("subtask".equals(splitString[2])) {
                         Subtask subtask = gson.fromJson(body, Subtask.class);
                         if (id < 0) {  //recordSubtasks
                             try {
-                                manager.recordSubtasks(subtask, subtask.getEpicId());
+                                MANAGER.recordSubtasks(subtask, subtask.getEpicId());
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -105,29 +104,29 @@ public class HttpTaskServer {
                                 int beginIndexOfFindStatus = body.indexOf("status");
                                 String findStatus = body.substring(beginIndexOfFindStatus);
                                 if (body.contains("NEW")) {
-                                    manager.updateTask(id, subtask, TaskStatuses.NEW);
+                                    MANAGER.updateTask(id, subtask, TaskStatuses.NEW);
                                 } else if (body.contains("IN_PROGRESS")) {
-                                    manager.updateTask(id, subtask, TaskStatuses.IN_PROGRESS);
+                                    MANAGER.updateTask(id, subtask, TaskStatuses.IN_PROGRESS);
                                 } else if (body.contains("DONE")) {
-                                    manager.updateTask(id, subtask, TaskStatuses.DONE);
+                                    MANAGER.updateTask(id, subtask, TaskStatuses.DONE);
                                 }
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         }
-                    } else if (splitString[2].equals("epic")) {
+                    } else if ("epic".equals(splitString[2])) {
                         Epic epic = gson.fromJson(body, Epic.class);
                         if (id < 0) {  //recordEpics
                             try {
-                                manager.recordEpics(epic);
+                                MANAGER.recordEpics(epic);
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         } else {  //updateEpic
                             try {
-                                manager.updateEpic(id, epic);
+                                MANAGER.updateEpic(id, epic);
                                 httpExchange.sendResponseHeaders(201, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -137,50 +136,50 @@ public class HttpTaskServer {
                     break;
 
                 case "DELETE":
-                    if (splitString[2].equals("task")) {
+                    if ("task".equals(splitString[2])) {
                         if (id < 0) {  //removeTasks
                             try {
-                                manager.removeTasks();
+                                MANAGER.removeTasks();
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         } else {  //removeTask
                             try {
-                                manager.removeTask(id);
+                                MANAGER.removeTask(id);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         }
                     }
-                    if (splitString[2].equals("subtask")) {
+                    if ("subtask".equals(splitString[2])) {
                         if (id < 0) {  //removeSubtasks
                             try {
-                                manager.removeSubtasks();
+                                MANAGER.removeSubtasks();
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         } else {  //removeSubtask
                             try {
-                                manager.removeSubtask(id);
+                                MANAGER.removeSubtask(id);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         }
-                    } else if (splitString[2].equals("epic")) {
+                    } else if ("epic".equals(splitString[2])) {
                         if (id < 0) {  //removeEpics
                             try {
-                                manager.removeEpics();
+                                MANAGER.removeEpics();
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
                             }
                         } else {  //removeEpic
                             try {
-                                manager.removeEpic(id);
+                                MANAGER.removeEpic(id);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(404, 0);
@@ -191,56 +190,56 @@ public class HttpTaskServer {
 
                 case "GET":
                     if (splitString.length < 3) { //getPrioritizedTasks
-                        Set<Task> taskList = manager.getPrioritizedTasks();
+                        Set<Task> taskList = MANAGER.getPrioritizedTasks();
                         response = gson.toJson(taskList);
                         httpExchange.sendResponseHeaders(200, 0);
-                    } else if (splitString[2].equals("task")){
+                    } else if ("task".equals(splitString[2])){
                         if (id < 0) {  //getTaskList
-                            ArrayList<Task> taskList = manager.getTaskList();
+                            ArrayList<Task> taskList = MANAGER.getTaskList();
                             response = gson.toJson(taskList);
                             httpExchange.sendResponseHeaders(200, 0);
                         } else {  //getTaskById
                             try {
-                                response = gson.toJson(manager.getTaskById(id));
+                                response = gson.toJson(MANAGER.getTaskById(id));
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         }
-                    } else if (splitString[2].equals("subtask")) {
+                    } else if ("subtask".equals(splitString[2])) {
                         if (splitString.length < 4) {
                             if (id < 0) {  //getSubtaskList
-                                ArrayList<Subtask> subTaskList = manager.getSubtaskList();
+                                ArrayList<Subtask> subTaskList = MANAGER.getSubtaskList();
                                 response = gson.toJson(subTaskList);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } else {  //getSubtaskById
                                 try {
-                                    response = gson.toJson(manager.getSubtaskById(id));
+                                    response = gson.toJson(MANAGER.getSubtaskById(id));
                                     httpExchange.sendResponseHeaders(200, 0);
                                 } catch (ManagerSaveException e) {
                                     httpExchange.sendResponseHeaders(404, 0);
                                 }
                             }
-                        } else if (splitString[3].equals("epic")) {  //getEpicIdSubtasks
-                            ArrayList<Subtask> subTaskList = manager.getEpicIdSubtasks(id);
+                        } else if ("epic".equals(splitString[3])) {  //getEpicIdSubtasks
+                            ArrayList<Subtask> subTaskList = MANAGER.getEpicIdSubtasks(id);
                             response = gson.toJson(subTaskList);
                             httpExchange.sendResponseHeaders(200, 0);
                         }
-                    } else if (splitString[2].equals("epic")) {
+                    } else if ("epic".equals(splitString[2])) {
                         if (id < 0) {  //getEpicList
-                            ArrayList<Epic> epicsList = manager.getEpicList();
+                            ArrayList<Epic> epicsList = MANAGER.getEpicList();
                             response = gson.toJson(epicsList);
                             httpExchange.sendResponseHeaders(200, 0);
                         } else {  //getEpicById
                             try {
-                                response = gson.toJson(manager.getEpicById(id));
+                                response = gson.toJson(MANAGER.getEpicById(id));
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         }
-                    } else if (splitString[2].equals("history")) {
-                        List<Task> taskHistory = manager.getHistory();
+                    } else if ("history".equals(splitString[2])) {
+                        List<Task> taskHistory = MANAGER.getHistory();
                         response = gson.toJson(taskHistory);
                         httpExchange.sendResponseHeaders(200, 0);
                     }

@@ -1,9 +1,9 @@
 package main;
 
-import main.Exceptions.ManagerSaveException;
-import main.Httpserver.KVServer;
-import main.taskManagement.HttpTaskManager;
-import main.taskManagement.TaskManager;
+import main.exceptions.ManagerSaveException;
+import main.httpserver.KVServer;
+import management.taskManagement.HttpTaskManager;
+import management.taskManagement.TaskManager;
 import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;

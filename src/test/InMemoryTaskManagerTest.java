@@ -1,6 +1,6 @@
 package test;
 
-import main.taskManagement.InMemoryTaskManager;
+import management.taskManagement.InMemoryTaskManager;
 import main.utils.Managers;
 
 
