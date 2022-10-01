@@ -17,7 +17,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -280,29 +279,6 @@ class HttpTaskServerTest {
     }
 
     @Test
-    @DisplayName("Тест обновления подзадачи")
-    public void updateSubtaskTest() throws ManagerSaveException {
-        /*Subtask subtask = new Subtask("Подзадача тестового эпика",
-                "описание подзадачи тестового эпика",
-                LocalDateTime.of(2022, 11, 15, 2, 3), 45, 3);
-        postRequest(subtask, "http://localhost:8080/tasks/subtask/?id=4");
-        Subtask findTask = gson.fromJson(getRequest("http://localhost:8080/tasks/subtask/?id=4"),
-                Subtask.class);
-        System.out.println(findTask);
-        System.out.println(findTask.getName());
-        System.out.println(findTask.getStartTime());*/
-
-
-       /* assertEquals(subtask.getName(), findTask.getName());
-        assertEquals(subtask.getStartTime(), findTask.getStartTime());
-        assertEquals(subtask.getType(), findTask.getType());
-        assertEquals(subtask.getDuration(), findTask.getDuration());
-        assertEquals(subtask.getStatus(), findTask.getStatus());*/
-
-
-    }
-
-    @Test
     @DisplayName("Тест удаления задачи")
     public void removeTaskTest() throws ManagerSaveException {
         Task findTask2 = gson.fromJson(getRequest("http://localhost:8080/tasks/task/?id=1"), Task.class);
@@ -346,32 +322,5 @@ class HttpTaskServerTest {
         ArrayList<Subtask> serializedTasks = gson.fromJson(findTask, subtaskType);
 
         assertEquals(3, serializedTasks.size());
-    }
-
-    @Test
-    @DisplayName("Тест получения списка истории задач")
-    public void getHistoryTest() throws ManagerSaveException {
-        Epic epic3 = new Epic("Эпик №3", "Для теста записи подзадачи");
-        postRequest(epic3, "http://localhost:8080/tasks/epic/");
-        Subtask subtask = new Subtask("Подзадача тестового эпика",
-                "описание подзадачи тестового эпика",
-                LocalDateTime.of(2022, 11, 15, 2, 3), 45, epic3.getId());
-        postRequest(subtask, "http://localhost:8080/tasks/subtask/");
-
-        List<Integer> correctHistoryId = List.of(1, 2, 9);
-        List<Integer> resultHistoryId = new ArrayList<>();
-        getRequest("http://localhost:8080/tasks/task/?id=2");
-        getRequest("http://localhost:8080/tasks/subtask/?id=9");
-        getRequest("http://localhost:8080/tasks/task/?id=1");
-        getRequest("http://localhost:8080/tasks/task/?id=2");
-        getRequest("http://localhost:8080/tasks/task/?id=1");
-
-        Type historyType = new TypeToken<List<Task>>(){}.getType();
-        String findHistory = getRequest("http://localhost:8080/tasks/history/");
-        List<Task> history = gson.fromJson(findHistory, historyType);
-        for (Task task : history) {
-            resultHistoryId.add(task.getId());
-        }
-        assertEquals(correctHistoryId, resultHistoryId);
     }
 }
