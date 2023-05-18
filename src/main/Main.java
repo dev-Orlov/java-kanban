@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws ManagerSaveException, IOException {
         new KVServer().start();
 
-        TaskManager manager = Managers.getDefault();
+        TaskManager manager = Managers.getDefault(); // код в классе Main создан для проверки работы программы
 
         manager.recordTasks(new Task("Задача №1", "Описание задачи №1",
                 LocalDateTime.of(2025, 9, 12, 10, 0), 30));
