@@ -2,7 +2,7 @@ Kanban
 ========================
 Трекер задач. Позволяет организовать совместную работу над задачами по системе канбан.
 
-![Модель данных](https://raw.githubusercontent.com/dev-Orlov/java-filmorate/add-database/chart_v8.png)
+![Модель данных](https://github.com/dev-Orlov/java-kanban/blob/main/visualization.png?raw=true)
 ***
 
 Функции
